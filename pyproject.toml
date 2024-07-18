@@ -10,9 +10,9 @@ dependencies = [
 ]
 readme = "README.md"
 requires-python = ">= 3.8"
+license = "BeerMIT"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: BeerMIT",
     "Operating System :: OS Independent",
 ]
 
