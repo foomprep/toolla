@@ -1,0 +1,39 @@
+[project]
+name = "toolla"
+version = "0.0.1"
+description = "Tool utilities for language models"
+authors = [
+    { name = "George Balch", email = "george.balch@proton.me" }
+]
+dependencies = [
+    "anthropic>=0.31.2",
+]
+readme = "README.md"
+requires-python = ">= 3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/joorjeh/toolla"
+Issues = "https://github.com/joorjeh/toolla/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "pytest>=8.2.2",
+    "pytest-cov>=5.0.0",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/toolla"]
+
