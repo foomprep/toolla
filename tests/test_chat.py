@@ -9,7 +9,23 @@ def add(x: int, y: int) -> int:
     """
     return x + y
 
-def test_tool_use():
+def concat(first: str, second: str) -> str:
+    """
+    A leetle function to concatentate strings
+
+    first: The first string
+    second: The second string
+
+    returns concatenated string
+    """
+    return first + second
+
+def test_concat_tool():
+    chat = Chat(tools=[concat])
+    r = chat("Concatenate the strings dream and tremor")
+    assert r == "dreamtremor"
+
+def test_add_tool():
     chat = Chat(
         tools=[add], 
     )
