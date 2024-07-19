@@ -13,3 +13,6 @@ wheels/
 .coverage
 
 tmp.py
+
+# robby
+.chat_history

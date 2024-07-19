@@ -1,10 +1,11 @@
 from toolla.utils import build_tool_schema
 
 def test_build_tool_schema():
-    def add(x: float, y: int):
+    def add(x: float, y: int, z: str):
         """
         x: The first number to add.
         y: The second number to add.
+        z: The third variable.
         """
         return x + y
 
@@ -14,13 +15,17 @@ def test_build_tool_schema():
         "properties": {
             "x": {
                 "type": "number",
-                "description": ""
+                "description": "The first number to add."
             },
             "y": {
                 "type": "number",
-                "description": "A float or integer."
+                "description": "The second number to add."
+            },
+            "z": {
+                "type": "string",
+                "description": "The third variable."
             }
         },
-        "required": ["x", "y"]
+        "required": ["x", "y", "z"]
     }
     assert schema == expected

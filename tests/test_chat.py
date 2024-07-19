@@ -1,6 +1,6 @@
 from toolla.chat import Chat
 
-def add(x, y):
+def add(x, y) -> int:
     return x + y
 
 add_tool = {
