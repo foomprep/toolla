@@ -11,3 +11,5 @@ wheels/
 
 # pytest
 .coverage
+
+tmp.py
