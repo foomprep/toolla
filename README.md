@@ -1,6 +1,6 @@
 # toolla
 
-`toola` is a simple wrapper for the Anthropic API tool use.  It has a `Chat` class that will <i>automatically</i> execute functions that are passed to the chat as tools.
+`toola` is a stateful wrapper for the Anthropic API tool use.  It has a `Chat` class that will <i>automatically</i> execute functions that are passed to the chat as tools.  
 
 ## Installation
 ```
@@ -12,7 +12,17 @@ export ANTHROPIC_API_KEY=...
 ```
 
 ## Quickstart
-Begin by defining the functions you'd like to use as tools
+You can use the chat normally without tools as
+```
+from toolla.chat import Chat
+
+sp = "Complete all prompts in the style of a pirate."
+chat = Chat(system=sp)
+chat("I'm George")
+chat("What's my name?")
+```
+
+To use tools, define the functions for them
 ```
 def add(x: int, y: int) -> int:
     """
@@ -25,13 +35,11 @@ def add(x: int, y: int) -> int:
 ```
 The format of the docstring is important.  The first line MUST be a description of the function.  Any remaining lines that contain the char `:` will be considered arguments to the function along with their descriptions.  The `Chat` class automatically generates tool schema to be used in the API when you create a `Chat` instance.  Simply pass in the functions you want to include as tools
 ```
-from toolla.chat import Chat
-
-chat = Chat(tools=[add])
+tool_chat = Chat(tools=[add])
 ```
 Then call `chat` to use the tool
 ```
-result = chat("What is 4911+4131?")
+result = tool_chat("What is 4911+4131?")
 print(result)
 ```
 The `result` variable will store whatever is returned by the tool.  Text responses will be printed to `stdout`.  You should see text printed similar to 
