@@ -12,11 +12,16 @@ class Chat:
         system: Union[str, None] = None,
         tools: List[Callable] = [],
     ):
-    # TODO possibly move client outside
-    # TODO add tool choice to force tooling
+        # TODO possibly move client outside
+        # TODO add tool choice to force tooling
         self.client = Anthropic()
         self.model = model
         self.system = system
+        self.chat_log = ""
+
+        # TODO these will change when expanding to other models
+        self.max_tokens = 4096
+        self.max_chars = 1_000_000
 
         # Build tool definitions from fns
         if tools:
@@ -29,12 +34,12 @@ class Chat:
         else:
             self.tools = []
 
-
     def __call__(
         self, 
         prompt, 
-        max_tokens=1024,
+        max_tokens=self.max_tokens,
     ):
+        append_to_log(f"Human: {prompt}\n") 
         # TODO assert if tool choice set, then tools is not None
         response = self.client.messages.create(
             model="claude-3-5-sonnet-20240620",
@@ -44,7 +49,7 @@ class Chat:
             messages=[
                 {
                     "role": "user", 
-                    "content": prompt
+                    "content": self.chat_log
                 }
             ]
         )
@@ -53,6 +58,7 @@ class Chat:
         for content in response.content:
             if isinstance(content, TextBlock):
                 print(content.text)
+                append_to_log(f"AI: {content.text}\n")
             if isinstance(content, ToolUseBlock):
                 # TODO make async spinner
                 fn_inputs = content.input
@@ -60,3 +66,10 @@ class Chat:
                 result = self.tool_fns[content.name](**fn_inputs)
                 print("Done.")
                 return result
+    
+    def append_to_log(s: str):
+        if len(self.chat_log) > self.max_chars:
+            excess = len(s) - self.max_chars
+            self.chat_log = self.chat_log[excess:] + s
+        else:
+            self.chat_log += s
