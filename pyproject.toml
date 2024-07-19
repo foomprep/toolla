@@ -1,7 +1,7 @@
 [project]
 name = "toolla"
-version = "0.0.1"
-description = "Tool utilities for language models"
+version = "0.0.2"
+description = "Tools wrapper for Anthropic API"
 authors = [
     { name = "George Balch", email = "george.balch@proton.me" }
 ]
