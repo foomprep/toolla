@@ -37,13 +37,12 @@ class Chat:
     def __call__(
         self, 
         prompt, 
-        max_tokens=self.max_tokens,
     ):
-        append_to_log(f"Human: {prompt}\n") 
+        self.append_to_log(f"Human: {prompt}\n") 
         # TODO assert if tool choice set, then tools is not None
         response = self.client.messages.create(
             model="claude-3-5-sonnet-20240620",
-            max_tokens=max_tokens,
+            max_tokens=self.max_tokens,
             tools=self.tools or [],
             system=self.system or '',
             messages=[
@@ -58,7 +57,7 @@ class Chat:
         for content in response.content:
             if isinstance(content, TextBlock):
                 print(content.text)
-                append_to_log(f"AI: {content.text}\n")
+                self.append_to_log(f"AI: {content.text}\n")
             if isinstance(content, ToolUseBlock):
                 # TODO make async spinner
                 fn_inputs = content.input
@@ -67,7 +66,7 @@ class Chat:
                 print("Done.")
                 return result
     
-    def append_to_log(s: str):
+    def append_to_log(self, s: str):
         if len(self.chat_log) > self.max_chars:
             excess = len(s) - self.max_chars
             self.chat_log = self.chat_log[excess:] + s
