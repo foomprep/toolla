@@ -22,12 +22,17 @@ def concat(first: str, second: str) -> str:
 
 def test_concat_tool():
     chat = Chat(tools=[concat])
-    r = chat("Concatenate the strings dream and tremor")
-    assert r == "dreamtremor"
+    t, fr = chat("Concatenate the strings dream and tremor")
+    assert fr == "dreamtremor"
 
 def test_add_tool():
     chat = Chat(
         tools=[add], 
     )
-    r = chat("What is 2+3?")
-    assert r == 5
+    t, fr = chat("What is 2+3?")
+    assert fr == 5
+
+def test_chat_image_content():
+    chat = Chat()
+    t, fr = chat(prompt="What is this an image of? Answer with one word.", image="./tests/cat.jpg")
+    assert "Cat" in t or "cat" in t, f"Expected 'Cat' in response, but got: {t}"

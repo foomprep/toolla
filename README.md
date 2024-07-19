@@ -18,11 +18,13 @@ from toolla.chat import Chat
 
 sp = "Complete all prompts in the style of a pirate."
 chat = Chat(system=sp)
-chat("I'm George")
-chat("What's my name?")
+text_response, _ = chat("I'm George")
+print(text_response)
+text_response, _ = chat("What's my name?")
+print(text_response)
 ```
 
-To use tools, define the functions for them
+Calling `chat` returns both the `TextBlock` response and if a tool is used, the value that is returned by the function corresponding to that tool. To use tools, define the function for a tool
 ```
 def add(x: int, y: int) -> int:
     """
@@ -39,12 +41,11 @@ tool_chat = Chat(tools=[add])
 ```
 Then call `chat` to use the tool
 ```
-result = tool_chat("What is 4911+4131?")
-print(result)
+text_response, function_response = tool_chat("What is 4911+4131?")
+print(function_response)
 ```
 The `result` variable will store whatever is returned by the tool.  Text responses will be printed to `stdout`.  You should see text printed similar to 
 ```
-To answer your question about what 4911 + 4131 is, I can use the "add" function that's available to me. Let me calculate that for you.
 Calling function add
 Done.
 9042
