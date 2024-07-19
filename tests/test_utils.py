@@ -1,5 +1,11 @@
-from toolla.utils import build_tool_schema
+from toolla.utils import (
+    build_tool_schema,
+    load_file_base64,
+    get_image_mime_type
+)
 from enum import Enum
+import base64
+from pathlib import Path
 
 def test_build_tool_schema():
     def add(x: float, y: int, z: str):
@@ -74,3 +80,43 @@ def test_build_schema_with_enum():
     print(schema)
     print(expected)
     assert schema == expected
+
+def test_load_file_base64():
+    # Create a temporary file with some content
+    test_file = Path("test_file.txt")
+    test_content = b"Hello, World!"
+    test_file.write_bytes(test_content)
+
+    try:
+        # Test the function
+        result = load_file_base64(test_file)
+        expected = base64.b64encode(test_content).decode('utf-8')
+        assert result == expected
+    finally:
+        # Clean up the temporary file
+        test_file.unlink()
+
+def test_get_jpeg_mime():
+    fpath = Path('arrakis.jpg')
+    t = get_image_mime_type(fpath)
+    assert t == "image/jpeg"
+
+def test_get_jpeg_alt_mime():
+    fpath = Path('dune.jpeg')
+    t = get_image_mime_type(fpath)
+    assert t == "image/jpeg"
+
+def test_get_gif_mime():
+    fpath = Path('sandworm.gif')
+    t = get_image_mime_type(fpath)
+    assert t == "image/gif"
+
+def test_get_png_mime():
+    fpath = Path('fremen.png')
+    t = get_image_mime_type(fpath)
+    assert t == "image/png"
+
+def test_get_webp_mime():
+    fpath = Path('spice.webp')
+    t = get_image_mime_type(fpath)
+    assert t == "image/webp"
