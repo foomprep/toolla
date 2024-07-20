@@ -59,7 +59,7 @@ chat(prompt="What is this image of?", image="./cat.jpg")
 Currently only supports `jpeg`, `png`, `gif` and `webp` as per Anthropic docs.
 
 ## Multi-step Multiple Tool Use
-`toolla` will execute multi-step tool use by default, based on the stop reason in the response from Anthropic.  Using the `add` function above a `multiply` function, simply specify multiple tools (without tool choice) and the `Chat` class will move step by step to get the result
+`toolla` will execute multi-step tool use by default, based on the stop reason in the response from Anthropic.  Using the `add` function above a with an additional `multiply` function, simply specify multiple tools (without tool choice) and the `Chat` class will move step by step to get the result
 ```
 def multiply(x: int, y: int) -> int:
     """
