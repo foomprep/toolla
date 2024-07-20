@@ -9,6 +9,15 @@ def add(x: int, y: int) -> int:
     """
     return x + y
 
+def multiply(x: int, y: int) -> int:
+    """
+    A function for muliplying two integers.
+
+    x: The first integer
+    y: The second integer
+    """
+    return x * y
+
 def concat(first: str, second: str) -> str:
     """
     A leetle function to concatentate strings
@@ -36,3 +45,8 @@ def test_chat_image_content():
     chat = Chat()
     t, fr = chat(prompt="What is this an image of? Answer with one word.", image="./tests/cat.jpg")
     assert "Cat" in t or "cat" in t, f"Expected 'Cat' in response, but got: {t}"
+
+def test_multiple_tools():
+    chat = Chat(tools=[add, multiply], max_steps=5)
+    t, fr = chat("What is (4*4911)+18?")
+    assert fr == 19644
