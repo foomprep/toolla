@@ -50,3 +50,27 @@ Calling function add
 Done.
 9042
 ```
+
+## Images
+Anthropic API allow for images.  To add an image to a message, add a string path to the call
+```
+chat(prompt="What is this image of?", image="./cat.jpg")
+```
+Currently only supports `jpeg`, `png`, `gif` and `webp` as per Anthropic docs.
+
+## Multi-step Multiple Tool Use
+`toolla` will execute multi-step tool use by default, depending on the stop reason in the response from Anthropic.  Using the `add` function above a `multiply` function, simply specify multiple tools (without tool choice) and the `Chat` class will move step by step to get the result
+```
+def multiply(x: int, y: int) -> int:
+    """
+    A function for multiplying two integers.
+
+    x: The first integer
+    y: The second integer
+    """
+    return x * y
+
+chat = Chat(tools=[add, multiply])
+t, fr = chat("What is (4*4911)+18?")
+print(f) # 19644
+```

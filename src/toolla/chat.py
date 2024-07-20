@@ -9,7 +9,7 @@ from toolla.utils import (
     load_file_base64
 )
 
-# Setup streaming
+# TODO setup streaming
 class Chat:
     def __init__(
         self, 
@@ -18,7 +18,6 @@ class Chat:
         tools: List[Callable] = [],
         max_steps = 10,
     ):
-        # TODO possibly move client outside
         # TODO add tool choice to force tooling
         self.client = Anthropic()
         self.model = model
@@ -26,7 +25,7 @@ class Chat:
         self.max_steps = max_steps
         self.messages = []
 
-        # TODO these will change when expanding to other models
+        # Will change when expanding to other models
         self.max_tokens = 4096
         self.max_chars = 1_000_000
 
@@ -78,6 +77,7 @@ class Chat:
             messages=self.messages,
         )
  
+
         text_response = None
         function_response = None
         for content in response.content:
@@ -101,10 +101,4 @@ class Chat:
                     return text_response, function_response
         # Just in case
         return text_response, function_response
-    
-    def append_to_log(self, s: str):
-        if len(self.chat_log) > self.max_chars:
-            excess = len(s) - self.max_chars
-            self.chat_log = self.chat_log[excess:] + s
-        else:
-            self.chat_log += s
+
