@@ -46,6 +46,7 @@ class Chat:
         self,
         prompt: str, 
         image: Union[str, None] = None, # base64 string
+        current_fn_response = None,
     ):
         message = {
             "role": "user",
@@ -78,7 +79,6 @@ class Chat:
             messages=self.messages,
         )
  
-        function_response = None
         for content in response.content:
             if isinstance(content, TextBlock):
                 self.messages.append({
@@ -87,17 +87,18 @@ class Chat:
                 })
                 if self.print_output:
                     print(content.text)
+                if response.stop_reason == 'end_turn':
+                    return current_fn_response
             elif isinstance(content, ToolUseBlock):
-                # TODO make async spinner
                 fn_inputs = content.input
-                function_response = self.tool_fns[content.name](**fn_inputs)
+                r = self.tool_fns[content.name](**fn_inputs)
                 if len(self.messages) < 2 * self.max_steps:
                     if response.stop_reason == 'tool_use':
-                        self(f"\nFunction {content.name} was called and returned a value of {function_response}")
-                    elif response.stop_reason == 'end_turn':
-                        return function_response
+                        return self(
+                            prompt=f"\nFunction {content.name} was called and returned a value of {r}",
+                            current_fn_response=r
+                        )
                 else:
-                    print("Reached maxiumum number of steps.")
+                    print("Reached maxiumum number of steps, returning current tool response.")
                     return None
-            else:
-                return None
+        return None
