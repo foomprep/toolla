@@ -94,7 +94,7 @@ class Chat:
                     "content": content.text,
                 })
                 if self.print_output:
-                    print(content.text)
+                    print(f"{content.text}\n")
                 if response.stop_reason == 'end_turn':
                     return current_fn_response
             elif isinstance(content, ToolUseBlock):
