@@ -1,6 +1,6 @@
 # toolla
 
-`toola` is a stateful wrapper for the Anthropic API tool use.  It has a `Chat` class that will <i>automatically</i> execute functions that are passed to the chat as tools.  
+`toola` is a high level stateful wrapper for Claude models through the `anthropic` python SDK.  It contains a `Chat` class that keeps a history of the chat and also enables automatic tool use by adding functions to the chat.
 
 ## Installation
 ```
@@ -16,8 +16,8 @@ You can use the chat normally without tools
 ```
 from toolla.chat import Chat
 
-sp = "Complete all prompts in the style of a pirate."
-chat = Chat(system=sp, print_output=True)
+system = "Complete all prompts in the style of a pirate."
+chat = Chat(system=system, print_output=True)
 chat("I'm George")
 chat("What's my name?")
 ```
