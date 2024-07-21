@@ -71,6 +71,6 @@ def multiply(x: int, y: int) -> int:
     return x * y
 
 chat = Chat(tools=[add, multiply], max_steps=5) # Default is 10
-t, fr = chat("What is (4*4911)+18?")
-print(f) # 19662
+result = chat("What is (4*4911)+18?")
+print(result) # 19662
 ```
