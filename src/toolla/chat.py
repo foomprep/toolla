@@ -27,7 +27,7 @@ class Chat:
         self.messages = []
         self.print_output = print_output
 
-        # Will change when expanding to other models
+        # TODO change when expanding to other models
         self.max_tokens = 4096
         self.max_chars = 1_000_000
 
@@ -69,6 +69,11 @@ class Chat:
                 }
             )
         self.messages.append(message)
+    
+        # A bit hacky, should calculate exact length given messages
+        if len(str(self.messages)) > self.max_chars:
+            while len(str(self.messages)) > self.max_chars:
+                self.messages.pop(0)
 
         # TODO assert if tool choice set, then tools is not None
         response = self.client.messages.create(
