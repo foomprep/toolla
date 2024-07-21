@@ -33,6 +33,8 @@ class Chat:
 
         # Build tool definitions from fns
         if tools:
+            # TODO check that docstrings
+            # match functions and are valid 
             self.tools = []
             self.tool_fns = {}
             for f in tools:
@@ -96,6 +98,7 @@ class Chat:
                     return current_fn_response
             elif isinstance(content, ToolUseBlock):
                 fn_inputs = content.input
+                # TODO add try catch block and return error
                 r = self.tool_fns[content.name](**fn_inputs)
                 if len(self.messages) < 2 * self.max_steps:
                     if response.stop_reason == 'tool_use':

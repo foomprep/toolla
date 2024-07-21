@@ -53,8 +53,8 @@ chat(prompt="What is this image of?", image="./cat.jpg")
 ```
 Currently only supports `jpeg`, `png`, `gif` and `webp` as per Anthropic docs.  The image is loaded as a base64 string and added to the query.  It is also added to the chat history along with text.
 
-## Multi-step Multiple Tool Use
-`toolla` will execute multi-step tool by default based on the stop reason in the response from Anthropic.  Using the `add` function above a with an additional `multiply` function, simply specify multiple tools and the `Chat` class will recursively call `chat()` up to a maximum steps
+## Multi-Step Tool Use
+`toolla` will execute multi-step tool by default based on the `stop_reason` in the response.  Specify  tools and the `Chat` class will recursively call `chat()` up to a maximum steps to accomplish the task specified in the prompt
 ```
 def multiply(x: int, y: int) -> int:
     """
