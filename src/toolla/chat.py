@@ -49,7 +49,7 @@ class Chat:
         prompt: str, 
         image: Union[str, None] = None, # base64 string
         current_fn_response = None,
-        disable_automatic = False,
+        disable_auto_execution = False,
     ):
         message = {
             "role": "user",
@@ -100,7 +100,7 @@ class Chat:
             elif isinstance(content, ToolUseBlock):
                 fn_inputs = content.input
                 # TODO add try catch block and return error
-                if disable_automatic:
+                if disable_auto_execution:
                     print(f"Function {content.name} is about to be called with inputs: {fn_inputs}")
                     user_input = input("Do you want to run this function? (y/n): ")
                     if user_input.lower() not in ['y', 'Y']:
@@ -112,7 +112,7 @@ class Chat:
                         return self(
                             prompt=f"\nFunction {content.name} was called and returned a value of {r}",
                             current_fn_response=r,
-                            disable_automatic=disable_automatic,
+                            disable_auto_execution=disable_auto_execution,
                         )
                 else:
                     print("Reached maxiumum number of steps, returning current tool response.")

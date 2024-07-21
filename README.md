@@ -48,7 +48,7 @@ print(summed)
 ⚠️ **Warning**
 By default, the `chat` will <i>automatically</i> use tool functions as they are called by the model.  To disable automatic execution pass in a flag when instantiating the `Chat` object
 ```
-chat = Chat(tools=[add], disable_automatic=True)
+chat = Chat(tools=[add], disable_auto_execution=True)
 ```
 
 ## Images
