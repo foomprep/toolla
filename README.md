@@ -21,7 +21,7 @@ chat = Chat(system=sp, print_output=True)
 chat("I'm George")
 chat("What's my name?")
 ```
-By default, `chat` does not print the text response of the model.  Set `print_output` to change. The `Chat` class keeps a stateful history of the chat up to the context length.
+By default, `chat` does not print the text response of the model.  Set `print_output` to change. The `Chat` class keeps a stateful history of the chat up to the context length.  You can access it at any time as object variable `messages`
 ```
 print(chat.messages)
 ```
