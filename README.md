@@ -76,7 +76,7 @@ print(result) # 19662
 ```
 
 ## Some tips
-When using the package for more complicated tasks some tips might be helpful.  The `Chat` object continues the multi-step process by taking the answer returned by the tool at that step and adding its result as a `user` message.  So, for the above example when the model returns with a `ToolUseBlock` for `add` tool, it will run the function, get the result and then add the message
+When using the package for more complicated tasks some tips might be helpful.  The `Chat` object continues the multi-step process by taking the answer returned by the tool at that step and adding its result as a `user` message.  So, for the above example when the model returns with a stop response of `tool_use` for `add` tool, it will run the function, get the result and then add the message
 ```
 {
     "role": "user",
