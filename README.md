@@ -12,19 +12,20 @@ export ANTHROPIC_API_KEY=...
 ```
 
 ## Quickstart
-You can use the chat normally without tools as
+You can use the chat normally without tools
 ```
 from toolla.chat import Chat
 
 sp = "Complete all prompts in the style of a pirate."
-chat = Chat(system=sp)
-text_response, _ = chat("I'm George")
-print(text_response)
-text_response, _ = chat("What's my name?")
-print(text_response)
+chat = Chat(system=sp, print_output=True)
+chat("I'm George")
+chat("What's my name?")
 ```
-
-Calling `chat` returns both the `TextBlock` response and if a tool is used, the value that is returned by the function corresponding to that tool. To use tools, define the function for a tool
+By default, `chat` does not print the text response of the model.  Set `print_output` to change. The `Chat` class keeps a stateful history of the chat up to the context length.
+```
+print(chat.messages)
+```
+`chat` only returns values when it uses tools.  The returned value is the return value of the LAST tool to be used. To use tools, define the function for a tool
 ```
 def add(x: int, y: int) -> int:
     """
@@ -41,25 +42,19 @@ tool_chat = Chat(tools=[add])
 ```
 Then call `chat` to use the tool
 ```
-text_response, function_response = tool_chat("What is 4911+4131?")
-print(function_response)
-```
-The `result` variable will store whatever is returned by the tool.  Text responses will be printed to `stdout`.  You should see text printed similar to 
-```
-Calling function add
-Done.
-9042
+summed = tool_chat("What is 4911+4131?")
+print(summed)
 ```
 
 ## Images
-Anthropic API allow for images.  To add an image to a message, add a string path to the call
+Anthropic API allow for images.  To include an image in a model query add a string path to the call
 ```
 chat(prompt="What is this image of?", image="./cat.jpg")
 ```
-Currently only supports `jpeg`, `png`, `gif` and `webp` as per Anthropic docs.
+Currently only supports `jpeg`, `png`, `gif` and `webp` as per Anthropic docs.  The image is loaded as a base64 string and added to the query.  It is also added to the chat history along with text.
 
 ## Multi-step Multiple Tool Use
-`toolla` will execute multi-step tool use by default, based on the stop reason in the response from Anthropic.  Using the `add` function above a with an additional `multiply` function, simply specify multiple tools (without tool choice) and the `Chat` class will move step by step to get the result
+`toolla` will execute multi-step tool by default based on the stop reason in the response from Anthropic.  Using the `add` function above a with an additional `multiply` function, simply specify multiple tools and the `Chat` class will move step by step to get the result
 ```
 def multiply(x: int, y: int) -> int:
     """

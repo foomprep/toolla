@@ -17,6 +17,7 @@ class Chat:
         system: Union[str, None] = None,
         tools: List[Callable] = [],
         max_steps = 10,
+        print_output=False,
     ):
         # TODO add tool choice to force tooling
         self.client = Anthropic()
@@ -24,6 +25,7 @@ class Chat:
         self.system = system
         self.max_steps = max_steps
         self.messages = []
+        self.print_output = print_output
 
         # Will change when expanding to other models
         self.max_tokens = 4096
@@ -41,7 +43,7 @@ class Chat:
             self.tools = []
 
     def __call__(
-        self, 
+        self,
         prompt: str, 
         image: Union[str, None] = None, # base64 string
     ):
@@ -67,7 +69,6 @@ class Chat:
             )
         self.messages.append(message)
 
-        print(self.messages)
         # TODO assert if tool choice set, then tools is not None
         response = self.client.messages.create(
             model="claude-3-5-sonnet-20240620",
@@ -77,8 +78,6 @@ class Chat:
             messages=self.messages,
         )
  
-
-        text_response = None
         function_response = None
         for content in response.content:
             if isinstance(content, TextBlock):
@@ -86,8 +85,9 @@ class Chat:
                     "role": "assistant",
                     "content": content.text,
                 })
-                text_response = content.text
-            if isinstance(content, ToolUseBlock):
+                if self.print_output:
+                    print(content.text)
+            elif isinstance(content, ToolUseBlock):
                 # TODO make async spinner
                 fn_inputs = content.input
                 function_response = self.tool_fns[content.name](**fn_inputs)
@@ -95,10 +95,9 @@ class Chat:
                     if response.stop_reason == 'tool_use':
                         self(f"\nFunction {content.name} was called and returned a value of {function_response}")
                     elif response.stop_reason == 'end_turn':
-                        return text_response, function_response
+                        return function_response
                 else:
                     print("Reached maxiumum number of steps.")
-                    return text_response, function_response
-        # Just in case
-        return text_response, function_response
-
+                    return None
+            else:
+                return None
