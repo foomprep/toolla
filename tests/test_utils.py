@@ -77,8 +77,6 @@ def test_build_schema_with_enum():
             "required": ["q", "a"]
         },
     }
-    print(schema)
-    print(expected)
     assert schema == expected
 
 def test_load_file_base64():
