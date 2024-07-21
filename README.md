@@ -67,5 +67,5 @@ def multiply(x: int, y: int) -> int:
 
 chat = Chat(tools=[add, multiply])
 t, fr = chat("What is (4*4911)+18?")
-print(f) # 19644
+print(f) # 19662
 ```
