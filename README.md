@@ -36,7 +36,7 @@ def add(x: int, y: int) -> int:
     """
     return x + y
 ```
-The format of the docstring is important.  The first line MUST be a description of the function.  Any remaining lines that contain the char `:` will be considered arguments to the function along with their descriptions.  The `Chat` class automatically generates tool schema to be used in the API when you create a `Chat` instance.  Simply pass in the functions you want to include as tools
+The format of the docstring is required.  The first line MUST be a description of the function.  Any remaining lines that contain the char `:` will be considered arguments to the function along with their descriptions.  The `Chat` class automatically generates tool schema to be used in the API when you create a `Chat` instance.  Simply pass in the functions you want to include as tools
 ```
 tool_chat = Chat(tools=[add])
 ```
@@ -44,6 +44,11 @@ Then call `chat` to use the tool
 ```
 summed = tool_chat("What is 4911+4131?")
 print(summed)
+```
+⚠️ **Warning**
+By default, the `chat` will <i>automatically</i> use tool functions as they are called by the model.  To disable automatic execution pass in a flag when instantiating the `Chat` object
+```
+chat = Chat(tools=[add], disable_automatic=True)
 ```
 
 ## Images
