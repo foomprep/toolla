@@ -31,22 +31,22 @@ def concat(first: str, second: str) -> str:
 
 def test_concat_tool():
     chat = Chat(tools=[concat])
-    t, fr = chat("Concatenate the strings dream and tremor")
-    assert fr == "dreamtremor"
+    r = chat("Concatenate the strings dream and tremor")
+    assert r == "dreamtremor"
 
 def test_add_tool():
     chat = Chat(
         tools=[add], 
     )
-    t, fr = chat("What is 2+3?")
-    assert fr == 5
+    r = chat("What is 2+3?")
+    assert r == 5
 
 def test_chat_image_content():
     chat = Chat()
-    t, fr = chat(prompt="What is this an image of? Answer with one word.", image="./tests/cat.jpg")
-    assert "Cat" in t or "cat" in t, f"Expected 'Cat' in response, but got: {t}"
+    chat(prompt="What is this an image of? Answer with one word.", image="./tests/cat.jpg")
+    assert 'Cat' in chat.messages[-1]['content'] or 'cat' in chat.messages[-1]['content']
 
 def test_multiple_tools():
     chat = Chat(tools=[add, multiply], max_steps=5)
-    t, fr = chat("What is (4*4911)+18?")
-    assert fr == 19644
+    r = chat("What is (4*4911)+18?")
+    assert r == 19662
