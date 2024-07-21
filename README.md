@@ -43,12 +43,12 @@ tool_chat = Chat(tools=[add])
 Then call `chat` to use the tool
 ```
 summed = tool_chat("What is 4911+4131?")
-print(summed)
+print(summed) # 9042
 ```
 ⚠️ **Warning**
 By default, the `chat` will <i>automatically</i> use tool functions as they are called by the model.  To disable automatic execution pass in a flag when instantiating the `Chat` object
 ```
-chat = Chat(tools=[add], disable_auto_execution=True)
+summed = tool_chat("What is 4911+4131?", disable_auto_execution=True)
 ```
 
 ## Images
