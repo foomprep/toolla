@@ -1,5 +1,5 @@
 from toolla.utils import (
-    build_tool_schema,
+    build_claude_tool_schema,
     load_file_base64,
     get_image_mime_type,
     parse_response_to_json,
@@ -8,7 +8,7 @@ from enum import Enum
 import base64
 from pathlib import Path
 
-def test_build_tool_schema():
+def test_build_claude_tool_schema():
     def add(x: float, y: int, z: str):
         """
         An adder function that allows for all types.
@@ -19,7 +19,7 @@ def test_build_tool_schema():
         """
         return x + y
 
-    schema = build_tool_schema(add)
+    schema = build_claude_tool_schema(add)
     expected = {
         "name": "add",
         "description": "An adder function that allows for all types.",
@@ -44,7 +44,7 @@ def test_build_tool_schema():
     }
     assert schema == expected
 
-def test_build_schema_with_enum():
+def test_build_claude_schema_with_enum():
     class Answer(Enum):
         YES = 1
         NO = 2
@@ -58,7 +58,7 @@ def test_build_schema_with_enum():
         """
         pass
     
-    schema = build_tool_schema(question)
+    schema = build_claude_tool_schema(question)
     expected = {
         "name": "question",
         "description": "Answer to a question",

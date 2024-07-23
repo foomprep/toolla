@@ -32,7 +32,7 @@ def parse_descriptions(input_string):
     return result
 
 # TODO add support for enums
-def build_tool_schema(f: Callable):
+def build_claude_tool_schema(f: Callable):
     """Build a JSON schema for a tool function."""
     descriptions = parse_descriptions(f.__doc__)
     hints = get_type_hints(f)
