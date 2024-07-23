@@ -31,6 +31,43 @@ def parse_descriptions(input_string):
     
     return result
 
+def build_openai_tool_schema(f: Callable):
+    """Build a JSON schema for an OpenAI tool function."""
+    descriptions = parse_descriptions(f.__doc__)
+    hints = get_type_hints(f)
+    schema = {
+        "type": "function",
+        "function": {
+            "name": f.__name__,
+            "description": descriptions['fn_description'],
+            "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": []
+            },
+        }
+    }
+
+    for param, hint in hints.items():
+        if param == "return":
+            continue
+        if isinstance(hint, type) and issubclass(hint, Enum):
+            schema["function"]["parameters"]["properties"][param] = {
+                "type": "string",
+                "enum": [e.name for e in hint],
+                "description": descriptions[param]
+            }
+            schema["function"]["parameters"]["required"].append(param)
+            continue
+
+        var_type = "number" if hint is int or hint is float else "string"
+        schema["function"]["parameters"]["properties"][param] = {
+            "type": var_type,
+            "description": descriptions[param]
+        }
+        schema["function"]["parameters"]["required"].append(param)
+    return schema
+
 # TODO add support for enums
 def build_claude_tool_schema(f: Callable):
     """Build a JSON schema for a tool function."""

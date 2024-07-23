@@ -1,24 +1,70 @@
 from toolla.utils import (
     build_claude_tool_schema,
+    build_openai_tool_schema,
     load_file_base64,
     get_image_mime_type,
     parse_response_to_json,
 )
-from enum import Enum
 import base64
 from pathlib import Path
+from .tools import add, question, multiply
+
+def test_build_openai_tool_schema():
+    schema = build_openai_tool_schema(add)
+    expected = {
+        "type": "function",
+        "function": {
+            "name": "add",
+            "description": "An adder function that allows for all types.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "x": {
+                        "type": "number",
+                        "description": "The first number to add."
+                    },
+                    "y": {
+                        "type": "number",
+                        "description": "The second number to add."
+                    },
+                    "z": {
+                        "type": "string",
+                        "description": "The third variable."
+                    }
+                },
+                "required": ["x", "y", "z"]
+            },
+        }
+    }
+    assert schema == expected
+
+def test_build_openai_tool_schema_with_enum():
+    schema = build_openai_tool_schema(question)
+    expected = {
+        "type": "function",
+        "function": {
+            "name": "question",
+            "description": "Answer to a question",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "q": {
+                        "type": "string",
+                        "description": "The question"
+                    },
+                    "a": {
+                        "type": "string",
+                        "enum": ["YES", "NO"],
+                        "description": "The answer"
+                    }
+                },
+                "required": ["q", "a"]
+            },
+        }
+    }
+    assert schema == expected
 
 def test_build_claude_tool_schema():
-    def add(x: float, y: int, z: str):
-        """
-        An adder function that allows for all types.
-
-        x: The first number to add.
-        y: The second number to add.
-        z: The third variable.
-        """
-        return x + y
-
     schema = build_claude_tool_schema(add)
     expected = {
         "name": "add",
@@ -45,19 +91,6 @@ def test_build_claude_tool_schema():
     assert schema == expected
 
 def test_build_claude_schema_with_enum():
-    class Answer(Enum):
-        YES = 1
-        NO = 2
-
-    def question(q: str, a: Answer) -> str:
-        """
-        Answer to a question
-
-        q: The question
-        a: The answer
-        """
-        pass
-    
     schema = build_claude_tool_schema(question)
     expected = {
         "name": "question",

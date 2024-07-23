@@ -1,9 +1,25 @@
-def add(x: int, y: int) -> int:
-    """
-    A function for adding two integers.
+from enum import Enum
 
-    x: The first integer
-    y: The second integer
+class Answer(Enum):
+    YES = 1
+    NO = 2
+
+def question(q: str, a: Answer) -> str:
+    """
+    Answer to a question
+
+    q: The question
+    a: The answer
+    """
+    pass
+
+def add(x: int, y: int, z: str) -> int:
+    """
+    An adder function that allows for all types.    
+
+    x: The first number to add.
+    y: The second number to add.
+    z: The third variable.
     """
     return x + y
 

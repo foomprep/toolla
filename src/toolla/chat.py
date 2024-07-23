@@ -1,5 +1,7 @@
+import os
 from typing import List, Dict, Union, Callable
 from pathlib import Path
+from openai import OpenAI
 from anthropic import Anthropic
 from anthropic.types.tool_use_block import ToolUseBlock
 from anthropic.types.text_block import TextBlock
@@ -117,6 +119,24 @@ class AnthropicClient:
                     return None
         return None
 
+class OpenAIClient:
+    def __init__(
+        self,
+        model: str = "gpt-4o",
+        system: Union[str, None] = None,
+        tools: List[Callable] = [],
+        max_steps = 10,
+        print_output=False,
+        api_key = Union[str, None] = None,
+    ):
+        self.client = OpenAI(api_key=api_key or os.environ.get("OPENAI_API_KEY"))
+        self.model = model
+        self.system = system
+        self.max_steps = max_steps
+        self.messages = []
+        self.print_output = print_output
+
+        self.tools = 
 
 # TODO setup streaming
 class Chat:
