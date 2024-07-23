@@ -18,8 +18,7 @@ from toolla.chat import Chat
 
 system = "Complete all prompts in the style of a pirate."
 chat = Chat(system=system, print_output=True)
-chat("I'm George")
-chat("What's my name?")
+chat("Hello")
 ```
 By default, `chat` does not print the text response of the model.  Set `print_output` to change. The `Chat` class keeps a stateful history of the chat up to the context length.  You can access it at any time as object variable `messages`
 ```
