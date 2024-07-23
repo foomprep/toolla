@@ -16,7 +16,8 @@ def test_add_tool():
 def test_chat_image_content():
     chat = Chat()
     chat(prompt="What is this an image of? Answer with one word.", image="./tests/cat.jpg")
-    assert 'Cat' in chat.messages[-1]['content'] or 'cat' in chat.messages[-1]['content']
+    messages = chat.get_messages()
+    assert 'Cat' in messages[-1]['content'] or 'cat' in messages[-1]['content']
 
 def test_multiple_tools():
     chat = Chat(tools=[add, multiply], max_steps=5)

@@ -4,22 +4,20 @@ from anthropic import Anthropic
 from anthropic.types.tool_use_block import ToolUseBlock
 from anthropic.types.text_block import TextBlock
 from toolla.utils import (
-    build_tool_schema,
+    build_claude_tool_schema,
     get_image_mime_type,
     load_file_base64
 )
 
-# TODO setup streaming
-class Chat:
+class AnthropicClient:
     def __init__(
-        self, 
-        model: str = "claude-3-5-sonnet-20240620",
+        self,
+        model: str,
         system: Union[str, None] = None,
-        tools: List[Callable] = [],
+        tools: List[Dict] = [],
         max_steps = 10,
         print_output=False,
     ):
-        # TODO add tool choice to force tooling
         self.client = Anthropic()
         self.model = model
         self.system = system
@@ -39,15 +37,15 @@ class Chat:
             self.tool_fns = {}
             for f in tools:
                 self.tool_fns[f.__name__] = f
-                tool_dict = build_tool_schema(f)
+                tool_dict = build_claude_tool_schema(f)
                 self.tools.append(tool_dict)
         else:
             self.tools = []
-
+    
     def __call__(
         self,
-        prompt: str, 
-        image: Union[str, None] = None, # base64 string
+        prompt: str,
+        image: Union[str, None] = None,
         current_fn_response = None,
         disable_auto_execution = False,
     ):
@@ -118,3 +116,39 @@ class Chat:
                     print("Reached maxiumum number of steps, returning current tool response.")
                     return None
         return None
+
+
+# TODO setup streaming
+class Chat:
+    def __init__(
+        self, 
+        model: str = "claude-3-5-sonnet-20240620",
+        system: Union[str, None] = None,
+        tools: List[Callable] = [],
+        max_steps = 10,
+        print_output=False,
+    ):
+        self.client = AnthropicClient(
+            model=model,
+            system=system,
+            tools=tools,
+            max_steps=max_steps,
+            print_output=print_output,
+        )
+
+    def __call__(
+        self,
+        prompt: str, 
+        image: Union[str, None] = None, # base64 string
+        current_fn_response = None,
+        disable_auto_execution = False,
+    ):
+       return self.client(
+            prompt=prompt,
+            image=image,
+            current_fn_response=current_fn_response,
+            disable_auto_execution=disable_auto_execution,
+       )
+
+    def get_messages(self):
+        return self.client.messages
