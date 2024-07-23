@@ -7,7 +7,7 @@ import re
 
 # TODO this is naive and could be problematic, 
 # what if the JSON contains code sections with triple backticks?
-def parse_response_to_json(input):
+def parse_response_to_json(input: str) -> Dict:
     pattern = r'```(.*?)```'
     match = re.search(pattern, input, re.DOTALL)
     if not match:
