@@ -252,8 +252,16 @@ class TogetherClient:
         tools: List[Callable] = [],
         max_steps = 10,
         print_output=False,
+        api_key: Union[str, None] = None,
     ):
-        self.client = TogetherClient(api_key=)
+        self.client = TogetherClient(api_key=api_key or os.environ.get("TOGETHER_API_KEY"))
+        self.model = model
+        self.system = system
+        self.max_steps = max_steps
+        self.messages = []
+        self.print_output = print_output
+
+        
 
 # TODO setup streaming
 class Chat:

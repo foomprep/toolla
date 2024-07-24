@@ -5,6 +5,11 @@ from pathlib import Path
 import json
 import re
 
+def extract_first_json_block(text):
+    pattern = r'```json\n(.*?)```'
+    match = re.search(pattern, text, re.DOTALL)
+    return json.loads(match.group(1)) if match else None
+
 # TODO this is naive and could be problematic, 
 # what if the JSON contains code sections with triple backticks?
 def parse_response_to_json(input: str) -> Dict:
