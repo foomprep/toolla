@@ -184,6 +184,7 @@ class OpenAIClient:
                 { "type": "text", "text": prompt }
             ]
         }
+        self.messages.append(message)
         if image:
             fpath = Path(image)
             mtype = get_image_mime_type(fpath)
@@ -196,7 +197,6 @@ class OpenAIClient:
                     }
                 }
             )
-        self.messages.append(message)
     
         while len(str(self.messages)) > self.max_chars:
             self.messages.pop(0)
