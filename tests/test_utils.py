@@ -1,3 +1,6 @@
+import pytest
+import base64
+from pathlib import Path
 from toolla.utils import (
     build_claude_tool_schema,
     build_openai_tool_schema,
@@ -5,9 +8,9 @@ from toolla.utils import (
     get_image_mime_type,
     parse_response_to_json,
     extract_first_json_block,
+    parse_descriptions,
 )
-import base64
-from pathlib import Path
+from toolla.exceptions import InvalidDescriptionException
 from .tools import add, question, multiply
 
 def test_extract_json_block_fail():
@@ -21,6 +24,21 @@ def test_extract_json_block_succed():
     assert parsed_s['tool'] == 'multiply'
     assert parsed_s['inputs']['x'] == 1313
     assert parsed_s['inputs']['y'] == 10
+
+def test_parse_description_succeed():
+    descriptions = parse_descriptions(add.__doc__)
+    assert descriptions['fn_description'] == "An adder function that allows for all types."
+    assert descriptions['x'] == "The first number to add."
+    assert descriptions['y'] == "The second number to add."
+    assert descriptions['z'] == "The third variable."
+
+def test_failed_description_parse():
+    with pytest.raises(InvalidDescriptionException) as excinfo:
+        description = """
+        This is a test description
+        """
+        descriptions = parse_descriptions(description)
+    assert str(excinfo.value) == "Error: Invalid description."
 
 def test_build_openai_tool_schema():
     schema = build_openai_tool_schema(add)
