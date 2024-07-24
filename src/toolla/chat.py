@@ -88,7 +88,7 @@ class AnthropicClient:
         while len(str(self.messages)) > self.max_chars:
             self.messages.pop(0)
             if not self.messages:
-                raise MessageTooLong
+                raise MessageTooLongException
 
         # TODO assert if tool choice set, then tools is not None
         response = self.client.messages.create(
@@ -201,7 +201,7 @@ class OpenAIClient:
         while len(str(self.messages)) > self.max_chars:
             self.messages.pop(0)
             if not self.messages:
-                raise MessageTooLong
+                raise MessageTooLongException
 
         # OpenAI doesn't allow for empty tool list
         # TODO change to self.tools or None
