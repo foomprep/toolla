@@ -1,4 +1,5 @@
-from toolla.chat import Chat
+import os
+from toolla.chat import Chat, MessageTooLong
 from .tools import add, multiply, concat
 
 def test_openai_add_tool():
@@ -44,4 +45,13 @@ def test_claude_multiple_tools():
     assert r == 19662
 
 def test_claude_large_message_fail():
-    
+    try:
+        with open('image.jpeg', 'wb') as f:
+            f.write(b'\0' * 2000000)
+        chat = Chat()
+        r = chat(prompt="What is this?", image='./image.jpeg')
+    except MessageTooLong as e:
+        assert str(e) == "Error: Message is too long"
+    finally:
+        if os.path.exists('image.jpeg'):
+            os.remove('image.jpeg')

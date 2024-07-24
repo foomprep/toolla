@@ -14,6 +14,11 @@ from toolla.utils import (
 )
 from toolla.models import models, default_tool_prompt
 
+class MessageTooLong(Exception):
+    def __init__(self, message="Error: Message is too long"):
+        self.message = message
+        super().__init__(self.message)
+
 class AnthropicClient:
     def __init__(
         self,
@@ -80,8 +85,7 @@ class AnthropicClient:
         while len(str(self.messages)) > self.max_chars:
             self.messages.pop(0)
             if not self.messages:
-                print("Error: Message is too large for context")
-                return
+                raise MessageTooLong
 
         # TODO assert if tool choice set, then tools is not None
         response = self.client.messages.create(
@@ -194,8 +198,7 @@ class OpenAIClient:
         while len(str(self.messages)) > self.max_chars:
             self.messages.pop(0)
             if not self.messages:
-                print("Error: Message is too large for context")
-                return
+                raise MessageTooLong
 
         # OpenAI doesn't allow for empty tool list
         # TODO change to self.tools or None
