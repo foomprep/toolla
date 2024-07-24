@@ -68,6 +68,7 @@ class AnthropicClient:
                 { "type": "text", "text": prompt }
             ]
         }
+        self.messages.append(message)
         if image:
             fpath = Path(image)
             mtype = get_image_mime_type(fpath)
@@ -82,7 +83,6 @@ class AnthropicClient:
                     }
                 }
             )
-        self.messages.append(message)
     
         # A bit hacky, should calculate exact length given messages
         while len(str(self.messages)) > self.max_chars:
