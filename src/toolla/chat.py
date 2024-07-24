@@ -17,9 +17,9 @@ from toolla.models import (
     default_tool_prompt
 )
 from toolla.exceptions import (
-    MessageTooLong,
+    MessageTooLongException,
     ModelNotSupportedException,
-    AbortedTool
+    AbortedToolException,
 )
 
 class AnthropicClient:
