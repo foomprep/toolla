@@ -8,6 +8,7 @@ authors = [
 dependencies = [
     "anthropic>=0.31.2",
     "openai>=1.36.1",
+    "together>=1.2.3",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"
