@@ -243,7 +243,6 @@ class OpenAIClient:
                 else:
                     print("Reached maxiumum number of steps, returning current tool response.")
                     return current_fn_response
-        return None   
 
 # TODO setup streaming
 class Chat:
