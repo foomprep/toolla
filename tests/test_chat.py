@@ -28,9 +28,7 @@ def test_claude_concat_tool():
     assert r == "dreamtremor"
 
 def test_claude_add_tool():
-    chat = Chat(
-        tools=[add], 
-    )
+    chat = Chat(tools=[add])
     r = chat("What is 2+3?")
     assert r == 5
 
@@ -44,3 +42,7 @@ def test_claude_multiple_tools():
     chat = Chat(tools=[add, multiply], max_steps=5)
     r = chat("What is (4*4911)+18?")
     assert r == 19662
+
+def test_claude_large_message_fail():
+    # assert failure
+

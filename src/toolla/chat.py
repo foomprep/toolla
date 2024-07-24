@@ -77,9 +77,8 @@ class AnthropicClient:
         self.messages.append(message)
     
         # A bit hacky, should calculate exact length given messages
-        if len(str(self.messages)) > self.max_chars:
-            while len(str(self.messages)) > self.max_chars:
-                self.messages.pop(0)
+        while len(str(self.messages)) > self.max_chars:
+            self.messages.pop(0)
 
         # TODO assert if tool choice set, then tools is not None
         response = self.client.messages.create(
@@ -190,7 +189,6 @@ class OpenAIClient:
         self.messages.append(message)
     
         while len(str(self.messages)) > self.max_chars:
-            print("TOO BIG")
             self.messages.pop(0)
 
         if not self.messages:
