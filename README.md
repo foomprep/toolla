@@ -31,7 +31,7 @@ By default, `chat` does not print the text response of the model.  Set `print_ou
 ```
 print(chat.get_messages())
 ```
-`chat` only returns values when it uses tools, otherwise `None`.  When multiple tools are used, it will return the value of the <b>LAST</b> tool used. To use tools, define the function for a tool with documentation
+`chat` only returns values when it uses tools, otherwise `None`.  When multiple tools are used, it will return the value of the <b><i>LAST</i></b> tool used. To use tools, define the function for a tool with documentation
 ```
 def add(x: int, y: int) -> int:
     """
