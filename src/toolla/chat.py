@@ -79,6 +79,9 @@ class AnthropicClient:
         # A bit hacky, should calculate exact length given messages
         while len(str(self.messages)) > self.max_chars:
             self.messages.pop(0)
+            if not self.messages:
+                print("Error: Message is too large for context")
+                return
 
         # TODO assert if tool choice set, then tools is not None
         response = self.client.messages.create(
@@ -190,10 +193,10 @@ class OpenAIClient:
     
         while len(str(self.messages)) > self.max_chars:
             self.messages.pop(0)
+            if not self.messages:
+                print("Error: Message is too large for context")
+                return
 
-        if not self.messages:
-            print("Error: Message is too large for context")
-            return
         # OpenAI doesn't allow for empty tool list
         # TODO change to self.tools or None
         response = self.client.chat.completions.create(

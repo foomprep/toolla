@@ -44,5 +44,4 @@ def test_claude_multiple_tools():
     assert r == 19662
 
 def test_claude_large_message_fail():
-    # assert failure
-
+    
