@@ -1,6 +1,6 @@
 # toolla
 
-`toola` is a high level stateful wrapper for LLMs.  It contains a `Chat` class that keeps a history of the chat and also enables automatic tool use by defining python functions. It currently supports all GPT and Claude models with vision capabilities as well as models through (Together AI)[https://www.together.ai/].  Tests have only been done for Llama models from Together but it should also work for others like Mistral.  The package aims to be as general as possible with respect to tool use.  Instead of including a suite of tools it allows the user to define their own tools using documented function definitions.  As a design choice, the package does not include streaming.  It assumes the end user will be using it in an interpreter/notebook environment.
+`toola` is a high level stateful wrapper for LLMs.  It contains a `Chat` class that keeps a history of the chat and also enables automatic tool use by defining python functions. It currently supports all GPT and Claude models with vision capabilities as well as models through [Together AI](https://www.together.ai/).  Tests have only been done for Llama models from Together but it should also work for others like Mistral.  The package aims to be as general as possible with respect to tool use.  Instead of including a suite of tools it allows the user to define their own tools using documented function definitions.  As a design choice, the package does not include streaming.  It assumes the end user will be using it in an interpreter/notebook environment.
 
 ## Installation
 ```
