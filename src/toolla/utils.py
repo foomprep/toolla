@@ -4,6 +4,7 @@ from enum import Enum
 from pathlib import Path
 import json
 import re
+from toolla.exceptions import InvalidDescriptionException
 
 def extract_first_json_block(text):
     pattern = r'```json\n(.*?)```'
@@ -25,14 +26,19 @@ def parse_response_to_json(input: str) -> Dict:
 def parse_descriptions(input_string):
     lines = input_string.strip().split('\n')
     result = {}
+    colon_found = False
     for i, line in enumerate(lines):
         if i == 0:
             result['fn_description'] = line.strip()
         elif ':' in line:
+            colon_found = True
             key, value = line.split(':', 1)
             key = key.strip()
             value = value.strip()
             result[key] = value
+    
+    if not colon_found:
+        raise InvalidDescriptionException
     
     return result
 
