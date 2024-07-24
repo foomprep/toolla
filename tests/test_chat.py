@@ -1,5 +1,11 @@
 import os
-from toolla.chat import Chat, MessageTooLong
+import builtins
+from toolla.chat import (
+    Chat,
+    MessageTooLongException,
+    AbortedToolException,
+    ModelNotSupportedException,
+)
 from .tools import add, multiply, concat
 
 def test_openai_add_tool():
@@ -22,6 +28,26 @@ def test_openai_multiple_tools():
     chat = Chat(model="gpt-4o", tools=[add, multiply])
     r = chat("What is (4*4911)+18?")
     assert r == 19662
+
+def test_openai_large_message_fail():
+    try:
+        with open('image.jpeg', 'wb') as f:
+            f.write(b'\0' * 2000000)
+        chat = Chat(model='gpt-4o')
+        r = chat(prompt="What is this?", image='./image.jpeg')
+    except MessageTooLongException as e:
+        assert str(e) == "Error: Message is too long"
+    finally:
+        if os.path.exists('image.jpeg'):
+            os.remove('image.jpeg')
+
+def test_openai_disable_auto_execution_answer_no():
+    builtins.input = lambda _: 'n'
+    chat = Chat(model="gpt-4o", tools=[add])
+    try:
+        r = chat("What is (4*4911)+18?", disable_auto_execution=True)
+    except AbortedToolException as e:
+        assert e.message == "Error: User aborted tool use."
 
 def test_claude_concat_tool():
     chat = Chat(tools=[concat])
@@ -50,8 +76,15 @@ def test_claude_large_message_fail():
             f.write(b'\0' * 2000000)
         chat = Chat()
         r = chat(prompt="What is this?", image='./image.jpeg')
-    except MessageTooLong as e:
+    except MessageTooLongException as e:
         assert str(e) == "Error: Message is too long"
     finally:
         if os.path.exists('image.jpeg'):
             os.remove('image.jpeg')
+
+def test_invalid_model_fails():
+    try:
+        chat = Chat(model="an_invalid_model_name")
+    except ModelNotSupportedException as e:
+        assert e.message == "Error: Model not supported by library."
+

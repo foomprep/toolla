@@ -14,8 +14,18 @@ from toolla.utils import (
 )
 from toolla.models import models, default_tool_prompt
 
-class MessageTooLong(Exception):
+class MessageTooLongException(Exception):
     def __init__(self, message="Error: Message is too long"):
+        self.message = message
+        super().__init__(self.message)
+
+class AbortedToolException(Exception):
+    def __init__(self, message="Error: User aborted tool use."):
+        self.message = message
+        super().__init__(self.message)
+
+class ModelNotSupportedException(Exception):
+    def __init__(self, message="Error: Model not supported by library."):
         self.message = message
         super().__init__(self.message)
 
@@ -114,7 +124,7 @@ class AnthropicClient:
                     user_input = input("Do you want to run this function? (y/n): ")
                     if user_input.lower() not in ['y', 'Y']:
                         print("Function call aborted by user.")
-                        return None
+                        raise AbortedTool
                 r = self.tool_fns[content.name](**fn_inputs)
                 if len(self.messages) < 2 * self.max_steps:
                     if response.stop_reason == 'tool_use':
@@ -268,6 +278,8 @@ class Chat:
                 max_steps=max_steps,
                 print_output=print_output,
             )
+        else:
+            raise ModelNotSupportedException
 
     def __call__(
         self,
