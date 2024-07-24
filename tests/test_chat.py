@@ -88,3 +88,6 @@ def test_invalid_model_fails():
     except ModelNotSupportedException as e:
         assert e.message == "Error: Model not supported by library."
 
+def test_get_supported_models():
+    supported_models = Chat.get_supported_models()
+

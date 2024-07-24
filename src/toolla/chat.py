@@ -287,8 +287,8 @@ class Chat:
             disable_auto_execution=disable_auto_execution,
         )
 
-    @staticmethod
-    def get_supported_models(self):
+    @classmethod
+    def get_supported_models(cls):
         return models
 
     def get_messages(self):
