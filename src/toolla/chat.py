@@ -29,8 +29,9 @@ class AnthropicClient:
         tools: List[Dict] = [],
         max_steps = 10,
         print_output=False,
+        api_key: Union[str, None] = None,
     ):
-        self.client = Anthropic()
+        self.client = Anthropic(api_key=api_key or os.environ.get("ANTHROPIC_API_KEY"))
         self.model = model
         self.system = system
         self.max_steps = max_steps
@@ -242,6 +243,17 @@ class OpenAIClient:
                 else:
                     print("Reached maxiumum number of steps, returning current tool response.")
                     return current_fn_response
+                
+class TogetherClient:
+    def __init__(
+        self,
+        model: str,
+        system: Union[str, None] = None,
+        tools: List[Callable] = [],
+        max_steps = 10,
+        print_output=False,
+    ):
+        self.client = TogetherClient(api_key=)
 
 # TODO setup streaming
 class Chat:
@@ -252,6 +264,7 @@ class Chat:
         tools: List[Callable] = [],
         max_steps = 10,
         print_output=False,
+        api_key: Union[str, None] = None,
     ):
         if model in models["openai_models"]:
             self.client = OpenAIClient(
@@ -260,6 +273,7 @@ class Chat:
                 tools=tools,
                 max_steps=max_steps,
                 print_output=print_output,
+                api_key=api_key,
             )
         elif model in models["claude_models"]:
             self.client = AnthropicClient(
@@ -268,6 +282,7 @@ class Chat:
                 tools=tools,
                 max_steps=max_steps,
                 print_output=print_output,
+                api_key=api_key,
             )
         else:
             raise ModelNotSupportedException
