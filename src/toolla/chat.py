@@ -12,22 +12,15 @@ from toolla.utils import (
     get_image_mime_type,
     load_file_base64
 )
-from toolla.models import models, default_tool_prompt
-
-class MessageTooLongException(Exception):
-    def __init__(self, message="Error: Message is too long"):
-        self.message = message
-        super().__init__(self.message)
-
-class AbortedToolException(Exception):
-    def __init__(self, message="Error: User aborted tool use."):
-        self.message = message
-        super().__init__(self.message)
-
-class ModelNotSupportedException(Exception):
-    def __init__(self, message="Error: Model not supported by library."):
-        self.message = message
-        super().__init__(self.message)
+from toolla.models import (
+    models,
+    default_tool_prompt
+)
+from toolla.exceptions import (
+    MessageTooLong,
+    ModelNotSupportedException,
+    AbortedTool
+)
 
 class AnthropicClient:
     def __init__(
