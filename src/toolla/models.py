@@ -2,6 +2,18 @@ default_tool_prompt = "You are a helpful assistant that tells the user which too
 
 # TODO add all subsequent models
 models = {
-    "openai_models": ["gpt-4o"],
-    "claude_models": ["claude-3-5-sonnet-20240620"],
+    "openai_models": [
+        "gpt-4o",
+        "gpt-4o-2024-05-13",
+        "gpt-4o-mini",
+        "gpt-4o-mini-2024-07-18",
+        "gpt-4-turbo",
+        "gpt-4-turbo-2024-04-09",
+    ],
+    "claude_models": [
+        "claude-3-5-sonnet-20240620",
+        "claude-3-opus-20240229",
+        "claude-3-sonnet-20240229",
+        "claude-3-haiku-20240307",
+    ],
 }
