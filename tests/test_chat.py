@@ -1,3 +1,4 @@
+import pytest
 import os
 import builtins
 from toolla.chat import (
@@ -7,6 +8,23 @@ from toolla.chat import (
     ModelNotSupportedException,
 )
 from .tools import add, multiply, concat
+
+models = {
+    "openai_models": [
+        "gpt-4o",
+        "gpt-4o-2024-05-13",
+        "gpt-4o-mini",
+        "gpt-4o-mini-2024-07-18",
+        "gpt-4-turbo",
+        "gpt-4-turbo-2024-04-09",
+    ],
+    "claude_models": [
+        "claude-3-5-sonnet-20240620",
+        "claude-3-opus-20240229",
+        "claude-3-sonnet-20240229",
+        "claude-3-haiku-20240307",
+    ],
+}
 
 def test_openai_add_tool():
     chat = Chat(model="gpt-4o", tools=[add])
@@ -42,12 +60,11 @@ def test_openai_large_message_fail():
             os.remove('image.jpeg')
 
 def test_openai_disable_auto_execution_answer_no():
-    builtins.input = lambda _: 'n'
-    chat = Chat(model="gpt-4o", tools=[add])
-    try:
-        r = chat("What is (4*4911)+18?", disable_auto_execution=True)
-    except AbortedToolException as e:
-        assert e.message == "Error: User aborted tool use."
+    with pytest.raises(AbortedToolException) as exc_info:
+        builtins.input = lambda _: 'n'
+        chat = Chat(model="gpt-4o", tools=[add])
+        chat("What is (4*4911)+18?", disable_auto_execution=True)
+    assert str(exc_info.value) == "Error: User aborted tool use."
 
 def test_claude_concat_tool():
     chat = Chat(tools=[concat])
@@ -88,6 +105,13 @@ def test_invalid_model_fails():
     except ModelNotSupportedException as e:
         assert e.message == "Error: Model not supported by library."
 
+def test_claude_disable_auto_execution_answer_no():
+    with pytest.raises(AbortedToolException) as exc_info:
+        builtins.input = lambda _: 'n'
+        chat = Chat(model="gpt-4o", tools=[add])
+        chat("What is (4*4911)+18?", disable_auto_execution=True)
+    assert str(exc_info.value) == "Error: User aborted tool use."
+
 def test_get_supported_models():
     supported_models = Chat.get_supported_models()
-
+    assert supported_models == models

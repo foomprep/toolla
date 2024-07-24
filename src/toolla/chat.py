@@ -14,7 +14,6 @@ from toolla.utils import (
 )
 from toolla.models import (
     models,
-    default_tool_prompt
 )
 from toolla.exceptions import (
     MessageTooLongException,
@@ -117,7 +116,7 @@ class AnthropicClient:
                     user_input = input("Do you want to run this function? (y/n): ")
                     if user_input.lower() not in ['y', 'Y']:
                         print("Function call aborted by user.")
-                        raise AbortedTool
+                        raise AbortedToolException
                 r = self.tool_fns[content.name](**fn_inputs)
                 if len(self.messages) < 2 * self.max_steps:
                     if response.stop_reason == 'tool_use':
@@ -232,7 +231,7 @@ class OpenAIClient:
                     user_input = input("Do you want to run this function? (y/n): ")
                     if user_input.lower() not in ['y', 'Y']:
                         print("Function call aborted by user.")
-                        return None
+                        raise AbortedToolException
                 r = self.tool_fns[function.name](**json.loads(function.arguments))
                 if len(self.messages) < 2 * self.max_steps:
                     return self(
