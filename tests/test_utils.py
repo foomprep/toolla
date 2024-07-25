@@ -14,12 +14,19 @@ from toolla.exceptions import InvalidDescriptionException
 from .tools import add, question, multiply
 
 def test_extract_json_block_fail():
-    s = 'Now that we have the final result, we can conclude the calculation.\n\nThe final answer is 13544.'
+    s = 'nclude the calculation.\n\nThe final answer is 13544.'
     parsed_s = extract_first_json_block(s)
     assert parsed_s == None
 
-def test_extract_json_block_succed():
-    s = 'To calculate this expression, we need to follow the order of operations (PEMDAS):\n\n1. Multiply 1313 and 10\n2. Add 414 to the result\n\nTo do this, we can use the "multiply" tool to multiply 1313 and 10, and then use the "add" tool to add 414 to the result.\n\nHere are the tools and inputs to use:\n\n```json\n{\n  "tool": "multiply",\n  "inputs": {\n    "x": 1313,\n    "y": 10\n  }\n}\n```\n\nPlease use the "multiply" tool with the inputs above, and then add the result to the conversation. I\'ll then guide you on the next step.'
+def test_extract_json_block_succeed_with_json_tag():
+    s = ' and inputs to use:\n\n```json\n{\n  "tool": "multiply",\n  "inputs": {\n    "x": 1313,\n    "y": 10\n  }\n}\n```\n\nPlease use the "multiply" tool with the inputs above, and then add the result to the conversation. I\'ll then guide you on the next step.'
+    parsed_s = extract_first_json_block(s)
+    assert parsed_s['tool'] == 'multiply'
+    assert parsed_s['inputs']['x'] == 1313
+    assert parsed_s['inputs']['y'] == 10
+
+def test_extract_json_block_succeed_without_json_tag():
+    s = ' and inputs to use:\n\n```\n{\n  "tool": "multiply",\n  "inputs": {\n    "x": 1313,\n    "y": 10\n  }\n}\n```\n\nPlease use the "multiply" tool with the inputs above, and then add the result to the conversation. I\'ll then guide you on the next step.'
     parsed_s = extract_first_json_block(s)
     assert parsed_s['tool'] == 'multiply'
     assert parsed_s['inputs']['x'] == 1313
