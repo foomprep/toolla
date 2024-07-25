@@ -1,6 +1,8 @@
 # toolla
 
-`toola` is a high level stateful wrapper for LLMs.  It contains a `Chat` class that keeps a history of the chat and also enables automatic tool use by defining python functions. It currently supports all GPT and Claude models with vision capabilities as well as models through [Together AI](https://www.together.ai/).  Tests have only been done for Llama models from Together but it should also work for others like Mistral.  The package aims to be as general as possible with respect to tool use.  Instead of including a suite of tools it allows the user to define their own tools using documented function definitions.  As a design choice, the package does not include streaming.  It assumes the end user will be using it in an interpreter/notebook environment.
+`toola` is a high level stateful wrapper for LLMs.  It contains a `Chat` class that keeps a history of the chat and also enables automatic tool use by defining python functions. It currently supports all GPT and Claude models with vision capabilities as well as models through [Together AI](https://www.together.ai/).  List of supported models can be found at [models](https://github.com/joorjeh/toolla/blob/master/src/toolla/models.py).
+
+The package aims to be as general as possible with respect to tool use.  Instead of including a suite of tools it allows the user to define their own tools using documented function definitions.  As a design choice, the package does not include streaming.  It assumes the end user will be using it in an interpreter/notebook environment.
 
 ## Installation
 ```
@@ -8,23 +10,16 @@ pip install toolla
 ```
 
 ## Quickstart
-The library expects an API key in the environment.  You can also pass it as parameter `api_key` to the `Chat` constructor
-```
-export ANTHROPIC_API_KEY=...
-export OPENAI_API_KEY=..
-export TOGETHER_API_KEY=..
-```
-or
-```
-chat = Chat(api_key='...')
-```
-
-You can use the chat normally without tools
+Make sure to have an API key in the environment such as `ANTHROPIC_API_KEY` or pass it as `api_key` to the `Chat` constructor.  You can use the chat without tools
 ```
 from toolla.chat import Chat
 
 system = "Complete all prompts in the style of a pirate."
-chat = Chat(system=system, print_output=True)
+chat = Chat(
+    model="claude-3-5-sonnet-20240620", 
+    system=system, 
+    print_output=True,
+)
 chat("Hello")
 ```
 By default, `chat` does not print the text response of the model.  Set `print_output=True` to send  messages to `stdout`. The `Chat` class keeps a stateful history of the chat up to the context length.  You can get the chat history at any time with
@@ -42,12 +37,9 @@ def add(x: int, y: int) -> int:
     """
     return x + y
 ```
-The docstring and its format is required.  The first line MUST be a description of the function.  Any remaining lines that contain `:` will be considered arguments to the function along with their descriptions.  Pass in the functions you want to include as tools
+The docstring and its format is required.  The first line MUST be a description of the function.  Any remaining lines that contain `:` will be parsed as arguments to the function along with their descriptions.  Argument lines MUST be written as `<argument_name>:<argument_description>`.  Pass in the functions you want to include as tools
 ```
 tool_chat = Chat(tools=[add])
-```
-Then call `chat` to use the tool
-```
 summed = tool_chat("What is 4911+4131?")
 print(summed) # 9042
 ```
@@ -62,7 +54,9 @@ To include an image in the request
 ```
 chat(prompt="What is this image of?", image="./cat.jpg")
 ```
-Currently supports `jpeg`, `png`, `gif` and `webp`.  The image is added to the prompt as a base64 string but is excluded from the chat state so that it doesn't quickly grow larger than the model context window .  Models through Together have images disabled as the platform currently does not have large enough context sizes to handle them.  This will be enabled as soon as Together adds larger context windows (which should be soon).
+Currently supports `jpeg`, `png`, `gif` and `webp`.  The image is added to the prompt as a base64 string but is excluded from the chat state so that it doesn't quickly grow larger than the model context window.  
+
+Image input for Together models is disabled as the platform currently does not have large enough context sizes to handle them.  This will be enabled as soon as Together adds larger context windows (which should be soon).
 
 ## Multi-Step Tool Use
 `toolla` will execute multi-step tool by default based on the response of the model.  Specify tools and the `Chat` class will recursively call itself up to a maximum steps to accomplish the task specified in the prompt
