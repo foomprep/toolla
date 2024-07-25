@@ -49,5 +49,5 @@ def test_fireworks_disable_auto_execution_answer_no():
     with pytest.raises(AbortedToolException) as exc_info:
         builtins.input = lambda _: 'n'
         chat = Chat(model="accounts/fireworks/models/llama-v3p1-405b-instruct", tools=[add])
-        chat("What is (4*4911)+18?", disable_auto_execution=True)
+        chat("What is 44911+18?", disable_auto_execution=True)
     assert str(exc_info.value) == "Error: User aborted tool use."
