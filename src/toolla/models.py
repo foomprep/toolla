@@ -18,5 +18,22 @@ models = {
     ],
     "together_models": [
         "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+        "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+        "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+        "meta-llama/Meta-Llama-3-8B-Instruct-Turbo",
+        "meta-llama/Meta-Llama-3-70B-Instruct-Turbo",
+        "meta-llama/Meta-Llama-3-8B-Instruct-Lite",
+        "meta-llama/Meta-Llama-3-70B-Instruct-Lite",
+        "deepseek-ai/deepseek-llm-67b-chat",
+        "deepseek-ai/deepseek-coder-33b-instruct",
+        "codellama/CodeLlama-13b-Instruct-hf",
+        "codellama/CodeLlama-34b-Instruct-hf",
+        "codellama/CodeLlama-70b-Instruct-hf",
+        "Qwen/Qwen2-72B-Instruct",
+        "NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO",
+        "NousResearch/Nous-Hermes-2-Mixtral-8x7B-SFT",
+        "mistralai/Mistral-7B-Instruct-v0.3",
+        "mistralai/Mixtral-8x7B-Instruct-v0.1",
+        "mistralai/Mixtral-8x22B-Instruct-v0.1",
     ]
 }
