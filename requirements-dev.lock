@@ -43,6 +43,8 @@ eval-type-backport==0.2.0
 filelock==3.15.4
     # via huggingface-hub
     # via together
+fireworks-ai==0.14.0
+    # via toolla
 frozenlist==1.4.1
     # via aiohttp
     # via aiosignal
@@ -54,7 +56,10 @@ httpcore==1.0.5
     # via httpx
 httpx==0.27.0
     # via anthropic
+    # via fireworks-ai
     # via openai
+httpx-sse==0.4.0
+    # via fireworks-ai
 huggingface-hub==0.24.0
     # via tokenizers
 idna==3.7
@@ -82,6 +87,7 @@ packaging==24.1
     # via huggingface-hub
     # via pytest
 pillow==10.4.0
+    # via fireworks-ai
     # via together
 pluggy==1.5.0
     # via pytest
@@ -89,6 +95,7 @@ pyarrow==17.0.0
     # via together
 pydantic==2.8.2
     # via anthropic
+    # via fireworks-ai
     # via openai
     # via together
 pydantic-core==2.20.1
