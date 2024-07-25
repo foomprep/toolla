@@ -10,8 +10,8 @@ from toolla.exceptions import (
 from toolla.utils import (
     extract_first_json_block,
     build_claude_tool_schema,
-    default_tool_prompt
 )
+from toolla.models import default_tool_prompt
 
 class TogetherClient:
     def __init__(
