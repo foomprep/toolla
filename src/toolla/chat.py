@@ -46,14 +46,14 @@ class Chat:
                 print_output=print_output,
                 api_key=api_key,
             )
-        elif model in models["fireworks_models"]:
-            self.client = FireworksClient(
-                model=model,
-                tools=tools,
-                max_steps=max_steps,
-                print_output=print_output,
-                api_key=api_key,
-            )
+        # elif model in models["fireworks_models"]:
+        #     self.client = FireworksClient(
+        #         model=model,
+        #         tools=tools,
+        #         max_steps=max_steps,
+        #         print_output=print_output,
+        #         api_key=api_key,
+        #     )
         else:
             raise ModelNotSupportedException
 
