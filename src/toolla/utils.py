@@ -9,7 +9,14 @@ from toolla.exceptions import InvalidDescriptionException
 def extract_first_json_block(text):
     pattern = r'```json\n(.*?)```'
     match = re.search(pattern, text, re.DOTALL)
-    return json.loads(match.group(1)) if match else None
+    parsed_dict = json.loads(match.group(1)) if match else None
+    if not parsed_dict:
+        match = re.search(r'```(.*?)```', text, re.DOTALL)
+        parsed_dict = json.loads(match.group(1)) if match else None
+        return parsed_dict
+    else:
+        return parsed_dict
+
 
 # TODO this is naive and could be problematic, 
 # what if the JSON contains code sections with triple backticks?

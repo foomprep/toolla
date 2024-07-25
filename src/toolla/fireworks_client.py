@@ -1,7 +1,7 @@
 import os
-from typing import Union, List, Callable
 from pathlib import Path
-from together import Together
+from typing import Union, List, Callable
+from fireworks.client import Fireworks
 from toolla.exceptions import (
     ImageNotSupportedException,
     MessageTooLongException,
@@ -10,28 +10,29 @@ from toolla.exceptions import (
 from toolla.utils import (
     extract_first_json_block,
     build_claude_tool_schema,
+    get_image_mime_type,
+    load_file_base64,
 )
 from toolla.models import default_tool_prompt
 
-class TogetherClient:
+class FireworksClient:
     def __init__(
         self,
-        model: str,
+        model: str = "accounts/fireworks/models/llama-v3p1-405b-instruct",
         #system: Union[str, None] = None,   Disable for now, use default prompt
         tools: List[Callable] = [],
         max_steps = 10,
         print_output=False,
         api_key: Union[str, None] = None,
     ):
-        self.client = Together(api_key=api_key or os.environ.get("TOGETHER_API_KEY"))
+        self.client = Fireworks(api_key=api_key or os.environ.get("FIREWORKS_API_KEY"))
         self.model = model
         # self.system = system
         self.max_steps = max_steps
         self.messages = []
         self.print_output = print_output
 
-        # TODO change based on model choice
-        # self.max_tokens = 4096
+        # TODO this hard limit should be calculated using tokneizer
         self.max_chars = 900_000
 
         if tools:
@@ -65,7 +66,8 @@ class TogetherClient:
             "content": prompt,
         }
         self.messages.append(message)
-        # TODO Together does not currently support images
+
+        # TODO not dependable given fireworks context limit
         # if image:
         #     fpath = Path(image)
         #     mtype = get_image_mime_type(fpath)
@@ -81,7 +83,6 @@ class TogetherClient:
 
         response = self.client.chat.completions.create(
             model=self.model,
-            # max_tokens=self.max_tokens,
             messages=self.messages,
         )
         self.messages.append({
