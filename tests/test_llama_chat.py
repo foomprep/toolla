@@ -21,12 +21,6 @@ def test_llama_concat_tool():
     r = chat("Concatenate the strings dream and tremor")
     assert r == "dreamtremor"
 
-# TODO Images not supported by Together API
-# def test_llama_image_content():
-#     chat = Chat(model="meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo")
-#     chat(prompt="What is this an image of? Answer with one word.", image="./tests/cat.jpg")
-#     messages = chat.get_messages()
-#     assert 'Cat' in messages[-1]['content'] or 'cat' in messages[-1]['content']
 def test_llama_image_not_supported():
     with pytest.raises(ImageNotSupportedException) as exc_info:
         chat = Chat(model="meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo")

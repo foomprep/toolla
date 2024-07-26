@@ -8,8 +8,8 @@ from toolla.exceptions import (
     AbortedToolException
 )
 from toolla.utils import (
-    extract_first_json_block,
     build_claude_tool_schema,
+    extract_json_from_text,
 )
 from toolla.models import default_tool_prompt
 
@@ -65,12 +65,6 @@ class TogetherClient:
             "content": prompt,
         }
         self.messages.append(message)
-        # TODO Together does not currently support images
-        # if image:
-        #     fpath = Path(image)
-        #     mtype = get_image_mime_type(fpath)
-        #     image_string = load_file_base64(fpath) 
-        #     message["content"] += f"\nImage Data:\ndata:{mtype};base64,{image_string}"
         if image:
             raise ImageNotSupportedException
     
@@ -90,7 +84,7 @@ class TogetherClient:
         })
         if self.print_output:
             print(f"{response.choices[0].message.content}\n")
-        parsed_response = extract_first_json_block(response.choices[0].message.content)
+        parsed_response = extract_json_from_text(response.choices[0].message.content)
         if parsed_response:
             if disable_auto_execution:
                 print(f"Function {parsed_response['tool']} is about to be called with inputs: {parsed_response['inputs']}")

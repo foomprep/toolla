@@ -28,6 +28,7 @@ class Chat:
                 max_steps=max_steps,
                 print_output=print_output,
                 base_url=base_url,
+                system=system,
             )
         elif model in models["openai_models"]:
             self.client = OpenAIClient(

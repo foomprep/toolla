@@ -1,13 +1,13 @@
-import os
 from typing import Union, List, Callable
 from openai import OpenAI
 from toolla.exceptions import (
     ImageNotSupportedException,
-    AbortedToolException
+    AbortedToolException,
+    MessageTooLongException,
 )
 from toolla.utils import (
-    extract_first_json_block,
     build_openai_tool_schema,
+    extract_json_from_text,
 )
 from toolla.models import default_tool_prompt
 
@@ -15,12 +15,12 @@ class OpenAICompatibleClient:
     def __init__(
         self,
         model: str,
-        #system: Union[str, None] = None,   Disable for now, use default prompt
         *,
         tools: List[Callable] = [],
         max_steps = 10,
         print_output=False,
         base_url: Union[str, None] = None,
+        system: Union[str, None] = None,
     ):
         self.client = OpenAI(
             base_url=base_url,
@@ -29,6 +29,7 @@ class OpenAICompatibleClient:
         self.max_steps = max_steps
         self.messages = []
         self.print_output = print_output
+        self.max_chars = 900_000 # Totally random, figure something else out
 
         if tools:
             # TODO check that docstrings
@@ -42,11 +43,10 @@ class OpenAICompatibleClient:
         else:
             self.tools = []
 
-        # TODO allow for custom system prompts
         self.messages.append(
             {
                 "role": "system",
-                "content": default_tool_prompt.format(tool_list=str(self.tools)),
+                "content": system or default_tool_prompt.format(tool_list=str(self.tools)),
             }
         )
         
@@ -62,23 +62,18 @@ class OpenAICompatibleClient:
             "content": prompt,
         }
         self.messages.append(message)
-        # TODO Together does not currently support images
-        # if image:
-        #     fpath = Path(image)
-        #     mtype = get_image_mime_type(fpath)
-        #     image_string = load_file_base64(fpath) 
-        #     message["content"] += f"\nImage Data:\ndata:{mtype};base64,{image_string}"
         if image:
             raise ImageNotSupportedException
     
-        # while len(str(self.messages)) > self.max_chars:
-        #     self.messages.pop(0)
-        #     if not self.messages:
-        #         raise MessageTooLongException
+        while len(str(self.messages)) > self.max_chars:
+            self.messages.pop(0)
+            if not self.messages:
+                raise MessageTooLongException
 
         response = self.client.chat.completions.create(
             model=self.model,
             messages=self.messages,
+            tools=self.tools,
         )
         print(response)
         self.messages.append({
@@ -87,7 +82,7 @@ class OpenAICompatibleClient:
         })
         if self.print_output:
             print(f"{response.choices[0].message.content}\n")
-        parsed_response = extract_first_json_block(response.choices[0].message.content)
+        parsed_response = extract_json_from_text(response.choices[0].message.content)
         if parsed_response:
             if disable_auto_execution:
                 print(f"Function {parsed_response['tool']} is about to be called with inputs: {parsed_response['inputs']}")

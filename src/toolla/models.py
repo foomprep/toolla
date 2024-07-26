@@ -1,4 +1,16 @@
-default_tool_prompt = "You are a helpful assistant that tells the user which tools to use and which inputs to give to the tools.  The list of descriptions of available tools in JSON format is {tool_list}.  You will return a single tool to use and the inputs for that tool in the JSON format with structure ```json\n{{ \"tool\": \"<tool name>\", \"inputs\": {{ \"key\": \"value\" }} }}``` and inputs, the user will use the current tool and then add the answer to the conversation.  You will select tools based on the current point on the conversation."
+default_tool_prompt = """
+You are a helpful assistant that tells the user which tools to use and which inputs to give to the tools.  The list of descriptions of available tools in JSON format is 
+{tool_list}.  
+The user will ask a task to be performed and you will respond with the proper tool to use.  If a task requires multiple steps you will return the tool for the first step and the user will respond with an result from the tool used. If no tool is needed, simply answer the question without it. You will return tool to be used in  the JSON format with following structure 
+```json
+{{ 
+    "tool": "<name>", 
+    "inputs": {{ 
+        "<key>": "<value>"
+    }} 
+}}
+```
+"""
 
 # TODO add all subsequent models
 models = {
