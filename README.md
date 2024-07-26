@@ -22,6 +22,13 @@ chat = Chat(
 )
 chat("Hello")
 ```
+OpenAI compatible endpoints can be added by passing `base_url`
+```
+chat = Chat(
+    model="llama3.1",
+    base_url="http://localhost:11434/v1" # ollama endpoint
+)
+```
 By default, `chat` does not print the text response of the model.  Set `print_output=True` to send  messages to `stdout`. The `Chat` class keeps a stateful history of the chat up to the context length.  You can get the chat history at any time with
 ```
 print(chat.get_messages())
