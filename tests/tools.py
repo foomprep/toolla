@@ -13,13 +13,12 @@ def question(q: str, a: Answer) -> str:
     """
     pass
 
-def add(x: int, y: int, z: str) -> int:
+def add(x: int, y: int) -> int:
     """
     An adder function that allows for all types.    
 
     x: The first number to add.
     y: The second number to add.
-    z: The third variable.
     """
     return x + y
 

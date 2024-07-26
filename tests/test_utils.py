@@ -37,7 +37,6 @@ def test_parse_description_succeed():
     assert descriptions['fn_description'] == "An adder function that allows for all types."
     assert descriptions['x'] == "The first number to add."
     assert descriptions['y'] == "The second number to add."
-    assert descriptions['z'] == "The third variable."
 
 def test_failed_description_parse():
     with pytest.raises(InvalidDescriptionException) as excinfo:
@@ -65,12 +64,8 @@ def test_build_openai_tool_schema():
                         "type": "number",
                         "description": "The second number to add."
                     },
-                    "z": {
-                        "type": "string",
-                        "description": "The third variable."
-                    }
                 },
-                "required": ["x", "y", "z"]
+                "required": ["x", "y"]
             },
         }
     }
@@ -118,12 +113,8 @@ def test_build_claude_tool_schema():
                     "type": "number",
                     "description": "The second number to add."
                 },
-                "z": {
-                    "type": "string",
-                    "description": "The third variable."
-                }
             },
-            "required": ["x", "y", "z"]
+            "required": ["x", "y"]
         },
     }
     assert schema == expected

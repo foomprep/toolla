@@ -8,7 +8,7 @@ from toolla.exceptions import (
 from toolla.anthropic_client import AnthropicClient
 from toolla.openai_client import OpenAIClient
 from toolla.together_client import TogetherClient
-from toolla.fireworks_client import FireworksClient
+from toolla.openai_compatible_client import OpenAICompatibleClient
 
 class Chat:
     def __init__(
@@ -19,8 +19,17 @@ class Chat:
         max_steps = 10,
         print_output=False,
         api_key: Union[str, None] = None,
+        base_url: Union[str, None] = None,
     ):
-        if model in models["openai_models"]:
+        if base_url:
+            self.client = OpenAICompatibleClient(
+                model=model,
+                tools=tools,
+                max_steps=max_steps,
+                print_output=print_output,
+                base_url=base_url,
+            )
+        elif model in models["openai_models"]:
             self.client = OpenAIClient(
                 model=model,
                 system=system,
