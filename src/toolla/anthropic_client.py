@@ -123,3 +123,7 @@ class AnthropicClient:
                     return None
         return None
 
+    def clear_messages(self):
+        for i, message in enumerate(self.messages):
+            if message["role"] in ["assistant", "user"]:
+                self.messages.pop(i)

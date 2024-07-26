@@ -32,8 +32,6 @@ class OpenAICompatibleClient:
         self.max_chars = 900_000 # Totally random, figure something else out
 
         if tools:
-            # TODO check that docstrings
-            # match functions and are valid 
             self.tools = []
             self.tool_fns = {}
             for f in tools:
@@ -102,3 +100,8 @@ class OpenAICompatibleClient:
                 return current_fn_response
         else:
             return current_fn_response
+    
+    def clear_messages(self):
+        for i, message in enumerate(self.messages):
+            if message["role"] in ["assistant", "user"]:
+                self.messages.pop(i)

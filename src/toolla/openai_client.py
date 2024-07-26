@@ -128,3 +128,7 @@ class OpenAIClient:
                     print("Reached maxiumum number of steps, returning current tool response.")
                     return current_fn_response
 
+    def clear_messages(self):
+        for i, message in enumerate(self.messages):
+            if message["role"] in ["assistant", "user"]:
+                self.messages.pop(i)
