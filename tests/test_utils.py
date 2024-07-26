@@ -6,28 +6,34 @@ from toolla.utils import (
     build_openai_tool_schema,
     load_file_base64,
     get_image_mime_type,
-    parse_response_to_json,
-    extract_first_json_block,
     parse_descriptions,
+    extract_json_from_text,
 )
 from toolla.exceptions import InvalidDescriptionException
 from .tools import add, question, multiply
 
 def test_extract_json_block_fail():
     s = 'nclude the calculation.\n\nThe final answer is 13544.'
-    parsed_s = extract_first_json_block(s)
+    parsed_s = extract_json_from_text(s)
     assert parsed_s == None
+
+def test_extract_json_succeed():
+    s = ' and inputs to use: {\n  "tool": "multiply",\n  "inputs": {\n    "x": 1313,\n    "y": 10\n  }\n} Please use the "multiply" tool with the inputs above, and then add the result to the conversation. I\'ll then guide you on the next step.'
+    parsed_s = extract_json_from_text(s)
+    assert parsed_s['tool'] == 'multiply'
+    assert parsed_s['inputs']['x'] == 1313
+    assert parsed_s['inputs']['y'] == 10
 
 def test_extract_json_block_succeed_with_json_tag():
     s = ' and inputs to use:\n\n```json\n{\n  "tool": "multiply",\n  "inputs": {\n    "x": 1313,\n    "y": 10\n  }\n}\n```\n\nPlease use the "multiply" tool with the inputs above, and then add the result to the conversation. I\'ll then guide you on the next step.'
-    parsed_s = extract_first_json_block(s)
+    parsed_s = extract_json_from_text(s)
     assert parsed_s['tool'] == 'multiply'
     assert parsed_s['inputs']['x'] == 1313
     assert parsed_s['inputs']['y'] == 10
 
 def test_extract_json_block_succeed_without_json_tag():
     s = ' and inputs to use:\n\n```\n{\n  "tool": "multiply",\n  "inputs": {\n    "x": 1313,\n    "y": 10\n  }\n}\n```\n\nPlease use the "multiply" tool with the inputs above, and then add the result to the conversation. I\'ll then guide you on the next step.'
-    parsed_s = extract_first_json_block(s)
+    parsed_s = extract_json_from_text(s)
     assert parsed_s['tool'] == 'multiply'
     assert parsed_s['inputs']['x'] == 1313
     assert parsed_s['inputs']['y'] == 10
@@ -181,17 +187,3 @@ def test_get_webp_mime():
     fpath = Path('spice.webp')
     t = get_image_mime_type(fpath)
     assert t == "image/webp"
-
-def test_correctly_parses_to_json():
-    response_string = 'I can help you with that. To calculate the sum of 44 and 18811, I recommend using the "add" tool. \n\nHere is the JSON output:\n\n```\n{\n  "tool": "add",\n  "inputs": {\n    "a": 44,\n    "b": 18811\n  }\n}\n```\n\nPlease use the "add" tool with the given inputs and add the result to the conversation. I\'ll be happy to help with the next step.'
-    parsed_json = parse_response_to_json(response_string)
-    assert parsed_json['tool'] == 'add'
-    assert parsed_json['inputs']['a'] == 44
-    assert parsed_json['inputs']['b'] == 18811
-
-def test_correctly_parses_to_json_2():
-    response_string = 'I can help you with that. To calculate the sum of 44 and 18811, I recommend using the "add" tool. \n\nHere is the JSON output:\n\n```\n{\n  "tool": "multiply",\n  "inputs": {\n    "a": 405,\n    "b": 181\n  }\n}\n```\n\nPlease use the "add" tool with the given inputs and add the result to the conversation. I\'ll be happy to help with the next step.'
-    parsed_json = parse_response_to_json(response_string)
-    assert parsed_json['tool'] == 'multiply'
-    assert parsed_json['inputs']['a'] == 405
-    assert parsed_json['inputs']['b'] == 181
