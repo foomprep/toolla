@@ -59,3 +59,11 @@ def test_invalid_model_fails():
         chat = Chat(model="an_invalid_model_name")
     except ModelNotSupportedException as e:
         assert e.message == "Error: Model not supported by library."
+
+def test_anthropic_client_clear_messages():
+    chat = Chat()
+    chat("hello")
+    print(chat.get_messages())
+    chat.clear_messages()
+    print(chat.get_messages())
+    assert chat.get_messages() == []

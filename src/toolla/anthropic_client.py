@@ -122,8 +122,3 @@ class AnthropicClient:
                     print("Reached maxiumum number of steps, returning current tool response.")
                     return None
         return None
-
-    def clear_messages(self):
-        for i, message in enumerate(self.messages):
-            if message["role"] in ["assistant", "user"]:
-                self.messages.pop(i)

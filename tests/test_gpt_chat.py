@@ -9,6 +9,12 @@ from toolla.exceptions import (
 from toolla.models import models
 from .tools import add, multiply, concat
 
+def test_openai_client_clear_message():
+    chat = Chat(model="gpt-4o")
+    chat("Hello")
+    chat.clear_messages()
+    assert len(chat.get_messages()) == 0
+
 def test_openai_add_tool():
     chat = Chat(model="gpt-4o", tools=[add])
     r = chat("What is 2+3?")

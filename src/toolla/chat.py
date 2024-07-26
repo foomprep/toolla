@@ -7,7 +7,6 @@ from toolla.exceptions import (
 )
 from toolla.anthropic_client import AnthropicClient
 from toolla.openai_client import OpenAIClient
-from toolla.together_client import TogetherClient
 from toolla.openai_compatible_client import OpenAICompatibleClient
 
 class Chat:
@@ -71,3 +70,8 @@ class Chat:
 
     def get_messages(self):
         return self.client.messages
+    
+    def clear_messages(self):
+        self.client.messages = [
+            message for message in self.client.messages if message["role"]  == "system"
+        ]
