@@ -22,7 +22,7 @@ chat = Chat(
 )
 chat("Hello")
 ```
-OpenAI compatible endpoints can be added by passing `base_url`
+OpenAI compatible endpoints can be used by passing `base_url`
 ```
 chat = Chat(
     model="llama3.1",
