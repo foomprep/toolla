@@ -77,6 +77,13 @@ print(result) # 19662
 ```
 If the call reaches `max_steps`, execution will be stopped and the return value from the last tool used will be returned to the caller.
 
+## Clearing the chat
+The chat history can grow pretty quickly.  The history can be cleared at any time by calling
+```
+chat.clear_messages()
+```
+All `user` and `assistant` messages will be cleared but `system` messages are kept.
+
 ## Some tips on function definition
 When using the package for more complicated tasks some tips might be helpful.  The `Chat` object continues the multi-step process by taking the answer returned by the tool at that step and adding its result as a `user` message.  So, for the above example when the model responds with tool for `add` tool, it will run the function, get the result and then add the message
 ```
