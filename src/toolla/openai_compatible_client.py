@@ -71,9 +71,7 @@ class OpenAICompatibleClient:
         response = self.client.chat.completions.create(
             model=self.model,
             messages=self.messages,
-            tools=self.tools,
         )
-        print(response)
         self.messages.append({
             "role": "assistant",
             "content": response.choices[0].message.content,
