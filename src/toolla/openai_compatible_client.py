@@ -46,7 +46,9 @@ class OpenAICompatibleClient:
         self.messages.append(
             {
                 "role": "system",
-                "content": system or default_tool_prompt.format(tool_list=str(self.tools)),
+                "content": 
+                    system.format(tool_list=str(self.tools)) or 
+                    default_tool_prompt.format(tool_list=str(self.tools)),
             }
         )
         
