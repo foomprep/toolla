@@ -21,9 +21,11 @@ class OpenAICompatibleClient:
         print_output=False,
         base_url: Union[str, None] = None,
         system: Union[str, None] = None,
+        api_key: Union[str, None] = None,
     ):
         self.client = OpenAI(
             base_url=base_url,
+            api_key=api_key,
         )
         self.model = model
         self.max_steps = max_steps
@@ -78,23 +80,24 @@ class OpenAICompatibleClient:
         })
         if self.print_output:
             print(f"{response.choices[0].message.content}\n")
-        parsed_response = extract_json_from_text(response.choices[0].message.content)
-        if parsed_response:
-            if disable_auto_execution:
-                print(f"Function {parsed_response['tool']} is about to be called with inputs: {parsed_response['inputs']}")
-                user_input = input("Do you want to run this function? (y/n): ")
-                if user_input.lower() not in ['y', 'Y']:
-                    print("Function call aborted by user.")
-                    raise AbortedToolException
-            r = self.tool_fns[parsed_response['tool']](**parsed_response['inputs'])
-            if len(self.messages) < 2 * self.max_steps:
-                return self(
-                    prompt=f"\nFunction {parsed_response['tool']} was called and returned a value of {r}",
-                    current_fn_response=r,
-                    disable_auto_execution=disable_auto_execution,
-                )
+        if self.tools:
+            parsed_response = extract_json_from_text(response.choices[0].message.content)
+            if parsed_response:
+                if disable_auto_execution:
+                    print(f"Function {parsed_response['tool']} is about to be called with inputs: {parsed_response['inputs']}")
+                    user_input = input("Do you want to run this function? (y/n): ")
+                    if user_input.lower() not in ['y', 'Y']:
+                        print("Function call aborted by user.")
+                        raise AbortedToolException
+                r = self.tool_fns[parsed_response['tool']](**parsed_response['inputs'])
+                if len(self.messages) < 2 * self.max_steps:
+                    return self(
+                        prompt=f"\nFunction {parsed_response['tool']} was called and returned a value of {r}",
+                        current_fn_response=r,
+                        disable_auto_execution=disable_auto_execution,
+                    )
+                else:
+                    print("Reached maxiumum number of steps, returning current tool response.")
+                    return current_fn_response
             else:
-                print("Reached maxiumum number of steps, returning current tool response.")
                 return current_fn_response
-        else:
-            return current_fn_response

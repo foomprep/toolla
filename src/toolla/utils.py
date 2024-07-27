@@ -18,6 +18,7 @@ def extract_json_from_text(text):
         if c == '}':
             curly_brace_count -= 1
             if curly_brace_count == 0:
+                print("Found text: ", text_without_newlines[start_index:i+1])
                 return json.loads(text_without_newlines[start_index:i+1])
     return None
 
