@@ -1,5 +1,6 @@
 from typing import Union, List, Callable, get_type_hints
-from openai import OpenAI
+import requests
+import json
 from toolla.exceptions import (
     ImageNotSupportedException,
     AbortedToolException,
@@ -7,26 +8,37 @@ from toolla.exceptions import (
 )
 from toolla.utils import (
     build_openai_tool_schema,
-    extract_json_from_text,
 )
-from toolla.models import default_tool_prompt
 
-class OpenAICompatibleClient:
+default_guided_gen_tool_prompt = """
+You are a helpful assistant that can guide the user through a series of steps to solve a problem.  You have access to a list of Available Tools and will return current tool to use given the Return Tool Schema.  If no tool is needed return an empty JSON.  ONLY return tools that are within available tools.
+
+Available Tools:
+{tool_list}
+
+Return Tool Schema:
+{{ 
+    'tool': '<name>', 
+    'inputs': {{ 
+        '<key>': '<value>'
+    }} 
+}}
+"""
+
+class OllamaGuidedClient:
+    base_url: str
+
     def __init__(
         self,
         model: str,
+        base_url: str,
         *,
         tools: List[Callable] = [],
         max_steps = 10,
         print_output=False,
-        base_url: Union[str, None] = None,
         system: Union[str, None] = None,
-        api_key: Union[str, None] = None,
     ):
-        self.client = OpenAI(
-            base_url=base_url,
-            api_key=api_key,
-        )
+        self.base_url = base_url
         self.model = model
         self.max_steps = max_steps
         self.messages = []
@@ -47,7 +59,7 @@ class OpenAICompatibleClient:
             {
                 "role": "system",
                 "content": system or 
-                    default_tool_prompt.format(tool_list=str(self.tools)),
+                    default_guided_gen_tool_prompt.format(tool_list=str(self.tools)),
             }
         )
         
@@ -71,25 +83,62 @@ class OpenAICompatibleClient:
             if not self.messages:
                 raise MessageTooLongException
 
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=self.messages,
+        payload = {
+            "model": self.model,
+            "messages": self.messages,
+            "stream": False,
+        }
+        response = requests.post(
+            self.base_url + '/api/chat',
+            json=payload,
         )
+        # TODO catch error for bad response
+        response_body = response.json()
+        print(response_body)
+        response_text = response_body['message']['content']
         self.messages.append({
             "role": "assistant",
-            "content": response.choices[0].message.content,
+            "content": response_text,
         })
+
+        # Parse suggested tool using structured generation with same model
+        # using ollama completion
+        prompt = f"""Parse and return the JSON in the following text
+        Text:
+        {response_text} 
+        """
+        json_parser_payload = {
+            "model": self.model,
+            "prompt": prompt,
+            "format": "json",
+            "stream": False,
+        }
+        response = requests.post(
+            self.base_url + '/api/generate',
+            json=json_parser_payload,
+        )
+        suggested_tool = json.loads(response.json()['response'])
+        print("Suggested tool: ", suggested_tool)
+
         if self.print_output:
-            print(f"{response.choices[0].message.content}\n")
+            print(f"{response_text}\n")
         if self.tools:
-            parsed_response = extract_json_from_text(response.choices[0].message.content)
-            if parsed_response:
+            if parsed_response and parsed_response['tool']:
                 if disable_auto_execution:
                     print(f"Function {parsed_response['tool']} is about to be called with inputs: {parsed_response['inputs']}")
                     user_input = input("Do you want to run this function? (y/n): ")
                     if user_input.lower() not in ['y', 'Y']:
                         print("Function call aborted by user.")
                         raise AbortedToolException
+                hints = get_type_hints(self.tool_fns[parsed_response['tool']])
+                for input in parsed_response['inputs']:
+                    if isinstance(hints[input], int):
+                        if isinstance(parsed_response['inputs'][input], str):
+                            parsed_response['inputs'][input] = int(parsed_response['inputs'][input])
+                        if isinstance(hints[input], float):
+                            if isinstance(parsed_response['inputs'][input], str):
+                                parsed_response['inputs'][input] = float(parsed_response['inputs'][input])
+
                 print("Calling function with inputs: ", parsed_response['inputs'])
                 print("Argument type hints are: ", get_type_hints(self.tool_fns[parsed_response['tool']]))
                 r = self.tool_fns[parsed_response['tool']](**parsed_response['inputs'])

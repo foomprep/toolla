@@ -8,9 +8,22 @@ from toolla.utils import (
     get_image_mime_type,
     parse_descriptions,
     extract_json_from_text,
+    load_json,
 )
 from toolla.exceptions import InvalidDescriptionException
 from .tools import add, question, multiply
+
+def test_load_json_or_none():
+    x = "{\n  \"tool\": \"multiply\",\n  \"inputs\": {\n    \"x\": 1313,\n    \"y\": 10\n  }\n}"
+    x_json = load_json(x)
+    assert x_json['tool'] == 'multiply'
+    assert x_json['inputs']['x'] == 1313
+    assert x_json['inputs']['y'] == 10
+
+def test_load_json_or_none_fail():
+    x = "{\n  \"tool\": \"multiply\",\n  \"inputs\": {\n    \"x\": 1313,\n    \"y\""
+    x_json = load_json(x)
+    assert x_json == None
 
 def test_extract_json_block_fail():
     s = 'nclude the calculation.\n\nThe final answer is 13544.'

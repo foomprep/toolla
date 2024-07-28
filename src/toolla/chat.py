@@ -8,6 +8,7 @@ from toolla.exceptions import (
 from toolla.anthropic_client import AnthropicClient
 from toolla.openai_client import OpenAIClient
 from toolla.openai_compatible_client import OpenAICompatibleClient
+from toolla.ollama_guided_client import OllamaGuidedClient
 
 class Chat:
     def __init__(
@@ -19,8 +20,18 @@ class Chat:
         print_output=False,
         api_key: Union[str, None] = None,
         base_url: Union[str, None] = None,
+        ollama_guided: bool = False,
     ):
-        if base_url:
+        if ollama_guided:
+            self.client = OllamaGuidedClient(
+                model=model,
+                base_url=base_url,
+                system=system,
+                tools=tools,
+                max_steps=max_steps,
+                print_output=print_output,
+            )
+        elif base_url:
             self.client = OpenAICompatibleClient(
                 model=model,
                 tools=tools,

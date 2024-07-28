@@ -1,10 +1,15 @@
 import base64
+import json
 from typing import get_type_hints, Callable, Dict, Any
 from enum import Enum
 from pathlib import Path
-import json
-import re
 from toolla.exceptions import InvalidDescriptionException
+
+def load_json(text: str):
+    try:
+        return json.loads(text)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return None
 
 def extract_json_from_text(text):
     text_without_newlines = text.replace('\n', '')

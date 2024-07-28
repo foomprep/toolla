@@ -33,7 +33,7 @@ def multiply(x: int, y: int) -> int:
 
 def concat(first: str, second: str) -> str:
     """
-    A leetle function to concatentate strings
+    A function to concatenate strings
 
     first: The first string
     second: The second string
