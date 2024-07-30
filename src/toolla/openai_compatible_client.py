@@ -90,8 +90,6 @@ class OpenAICompatibleClient:
                     if user_input.lower() not in ['y', 'Y']:
                         print("Function call aborted by user.")
                         raise AbortedToolException
-                print("Calling function with inputs: ", parsed_response['inputs'])
-                print("Argument type hints are: ", get_type_hints(self.tool_fns[parsed_response['tool']]))
                 r = self.tool_fns[parsed_response['tool']](**parsed_response['inputs'])
                 if len(self.messages) < 2 * self.max_steps:
                     return self(

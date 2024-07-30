@@ -11,7 +11,9 @@ from toolla.utils import (
 )
 
 default_guided_gen_tool_prompt = """
-You are a helpful assistant that can guide the user through a series of steps to solve a problem.  You have access to a list of Available Tools and will return current tool to use given the Return Tool Schema.  If no tool is needed return an empty JSON.  ONLY return tools that are within available tools.
+You are a helpful assistant that can guide the user through a series of steps to solve a problem.  You have access to a list of Available Tools.  
+
+Return the tool in the structure of Return Tool Schema.  If no tool is needed return an empty JSON.  ONLY use tools that are available.
 
 Available Tools:
 {tool_list}
@@ -100,10 +102,14 @@ class OllamaGuidedClient:
             "role": "assistant",
             "content": response_text,
         })
+        if self.print_output:
+            print(f"{response_text}\n")
 
         # Parse suggested tool using structured generation with same model
         # using ollama completion
-        prompt = f"""Parse and return the JSON in the following text
+        prompt = f"""Go through the following text and extract any JSON from it.  ONLY return
+        the JSON.  If there is no JSON return an empty object {{}}.
+        \n
         Text:
         {response_text} 
         """
@@ -120,36 +126,30 @@ class OllamaGuidedClient:
         suggested_tool = json.loads(response.json()['response'])
         print("Suggested tool: ", suggested_tool)
 
-        if self.print_output:
-            print(f"{response_text}\n")
-        if self.tools:
-            if parsed_response and parsed_response['tool']:
-                if disable_auto_execution:
-                    print(f"Function {parsed_response['tool']} is about to be called with inputs: {parsed_response['inputs']}")
-                    user_input = input("Do you want to run this function? (y/n): ")
-                    if user_input.lower() not in ['y', 'Y']:
-                        print("Function call aborted by user.")
-                        raise AbortedToolException
-                hints = get_type_hints(self.tool_fns[parsed_response['tool']])
-                for input in parsed_response['inputs']:
-                    if isinstance(hints[input], int):
-                        if isinstance(parsed_response['inputs'][input], str):
-                            parsed_response['inputs'][input] = int(parsed_response['inputs'][input])
-                        if isinstance(hints[input], float):
-                            if isinstance(parsed_response['inputs'][input], str):
-                                parsed_response['inputs'][input] = float(parsed_response['inputs'][input])
-
-                print("Calling function with inputs: ", parsed_response['inputs'])
-                print("Argument type hints are: ", get_type_hints(self.tool_fns[parsed_response['tool']]))
-                r = self.tool_fns[parsed_response['tool']](**parsed_response['inputs'])
-                if len(self.messages) < 2 * self.max_steps:
-                    return self(
-                        prompt=f"\nFunction {parsed_response['tool']} was called and returned a value of {r}",
-                        current_fn_response=r,
-                        disable_auto_execution=disable_auto_execution,
-                    )
-                else:
-                    print("Reached maxiumum number of steps, returning current tool response.")
-                    return current_fn_response
+        if 'tool' in suggested_tool and suggested_tool['tool']:
+            if disable_auto_execution:
+                print(f"Function {suggested_tool['tool']} is about to be called with inputs: {suggested_tool['inputs']}")
+                user_input = input("Do you want to run this function? (y/n): ")
+                if user_input.lower() not in ['y', 'Y']:
+                    print("Function call aborted by user.")
+                    raise AbortedToolException
+            hints = get_type_hints(self.tool_fns[suggested_tool['tool']])
+            for input in suggested_tool['inputs']:
+                if isinstance(hints[input], int):
+                    if isinstance(suggested_tool['inputs'][input], str):
+                        suggested_tool['inputs'][input] = int(suggested_tool['inputs'][input])
+                    if isinstance(hints[input], float):
+                        if isinstance(suggested_tool['inputs'][input], str):
+                            suggested_tool['inputs'][input] = float(suggested_tool['inputs'][input])
+            r = self.tool_fns[suggested_tool['tool']](**suggested_tool['inputs'])
+            if len(self.messages) < 2 * self.max_steps:
+                return self(
+                    prompt=f"\nFunction {suggested_tool['tool']} was called and returned a value of {r}",
+                    current_fn_response=r,
+                    disable_auto_execution=disable_auto_execution,
+                )
             else:
+                print("Reached maxiumum number of steps, returning current tool response.")
                 return current_fn_response
+        else:
+            return current_fn_response
