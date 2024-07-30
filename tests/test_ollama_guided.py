@@ -12,19 +12,6 @@ from .tools import add, multiply, concat
 
 BASE_URL = "http://localhost:11434"
 
-#def test_openai_compatible_client_clear_messages():
-#    chat = Chat(
-#        model="llama3.1",
-#        base_url=BASE_URL, 
-#        tools=[add],
-#        ollama_guided=True,
-#    )
-#    r = chat("Hello")
-#    chat.clear_messages()
-#    messages = chat.get_messages()
-#    assert len(messages) == 1
-#    assert messages[0]["role"] == "system"
-
 def test_ollama_llama3_add_tool():
     chat = Chat(
         model="llama3.1",
