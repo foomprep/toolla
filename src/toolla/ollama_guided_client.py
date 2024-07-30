@@ -96,7 +96,6 @@ class OllamaGuidedClient:
         )
         # TODO catch error for bad response
         response_body = response.json()
-        print(response_body)
         response_text = response_body['message']['content']
         self.messages.append({
             "role": "assistant",
