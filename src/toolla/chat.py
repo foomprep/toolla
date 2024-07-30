@@ -20,18 +20,18 @@ class Chat:
         print_output=False,
         api_key: Union[str, None] = None,
         base_url: Union[str, None] = None,
-        ollama_guided: bool = False,
+        #ollama_guided: bool = False,
     ):
-        if ollama_guided:
-            self.client = OllamaGuidedClient(
-                model=model,
-                base_url=base_url,
-                system=system,
-                tools=tools,
-                max_steps=max_steps,
-                print_output=print_output,
-            )
-        elif base_url:
+        # if ollama_guided:
+        #     self.client = OllamaGuidedClient(
+        #         model=model,
+        #         base_url=base_url,
+        #         system=system,
+        #         tools=tools,
+        #         max_steps=max_steps,
+        #         print_output=print_output,
+        #     )
+        if base_url:
             self.client = OpenAICompatibleClient(
                 model=model,
                 tools=tools,
