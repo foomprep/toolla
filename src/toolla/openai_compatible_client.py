@@ -8,6 +8,7 @@ from toolla.exceptions import (
 from toolla.utils import (
     build_openai_tool_schema,
     extract_json_from_text,
+    parse_and_cast_input_types,
 )
 from toolla.models import default_tool_prompt
 
@@ -93,7 +94,13 @@ class OpenAICompatibleClient:
                     if user_input.lower() not in ['y', 'Y']:
                         print("Function call aborted by user.")
                         raise AbortedToolException
-                r = self.tool_fns[parsed_response['tool']](**parsed_response['inputs'])
+                # Cast all input values to specified type (in case returned as strings)
+                casted_inputs = parse_and_cast_input_types(
+                    inputs=parsed_response['inputs'],
+                    f=self.tool_fns[parsed_response['tool']],
+                )
+                print("Annotations: ", self.tool_fns[parsed_response['tool']].__annotations__)
+                r = self.tool_fns[parsed_response['tool']](**casted_inputs)
                 if len(self.messages) < 2 * self.max_steps:
                     return self(
                         prompt=f"\nFunction {parsed_response['tool']} was called and returned a value of {r}",

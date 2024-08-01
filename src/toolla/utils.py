@@ -1,9 +1,32 @@
 import base64
 import json
-from typing import get_type_hints, Callable, Dict, Any
+from typing import (
+    get_type_hints,
+    Callable,
+    Dict,
+    Any,
+    Optional,
+    Union,
+    List,
+)
 from enum import Enum
 from pathlib import Path
 from toolla.exceptions import InvalidDescriptionException
+
+def parse_and_cast_input_types(
+    inputs: Dict[str, Union[int, float, str]],
+    f: Callable[List[Union[int, float, str]], Optional[Union[int, float, str]]],
+):
+    annotations = f.__annotations__
+    casted_inputs = {}
+    for input, value in inputs.items():
+        if annotations[input] == int:
+            casted_inputs[input] = int(value)
+        elif annotations[input] == float:
+            casted_inputs[input] = float(value)
+        else:
+            casted_inputs[input] = value
+    return casted_inputs
 
 def load_json(text: str):
     try:

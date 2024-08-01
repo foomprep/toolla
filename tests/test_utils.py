@@ -9,9 +9,22 @@ from toolla.utils import (
     parse_descriptions,
     extract_json_from_text,
     load_json,
+    parse_and_cast_input_types,
 )
 from toolla.exceptions import InvalidDescriptionException
 from .tools import add, question, multiply
+
+def test_input_values_casted_correctly():
+    def f(a: int, b: float):
+        pass
+    incorrect_inputs = {
+        "a": "1841",
+        "b": "31.131"
+    }
+    correct_inputs = parse_and_cast_input_types(inputs=incorrect_inputs, f=f)
+    print("Correct inputs: ", correct_inputs)
+    assert correct_inputs['a'] == 1841
+    assert correct_inputs['b'] == 31.131
 
 def test_load_json_or_none():
     x = "{\n  \"tool\": \"multiply\",\n  \"inputs\": {\n    \"x\": 1313,\n    \"y\": 10\n  }\n}"
