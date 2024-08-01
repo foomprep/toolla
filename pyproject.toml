@@ -1,6 +1,6 @@
 [project]
 name = "toolla"
-version = "0.2.3"
+version = "0.2.4"
 description = "Automatic tool use for LLMs"
 authors = [
     { name = "George Balch", email = "george.balch@proton.me" }
