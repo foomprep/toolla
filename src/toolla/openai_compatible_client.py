@@ -43,11 +43,14 @@ class OpenAICompatibleClient:
         else:
             self.tools = []
 
+        if system:
+            system_prompt = system + default_tool_prompt.format(tool_list=str(self.tools))
+        else:
+            system_prompt = default_tool_prompt.format(tool_list=str(self.tools))
         self.messages.append(
             {
                 "role": "system",
-                "content": system or 
-                    default_tool_prompt.format(tool_list=str(self.tools)),
+                "content": system_prompt,
             }
         )
         
