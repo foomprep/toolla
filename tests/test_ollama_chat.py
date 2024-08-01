@@ -31,6 +31,16 @@ def test_ollama_llama3_add_tool():
     r = chat("What is 341+18?")
     assert r == 359
 
+def test_ollama_llama3_add_tool_with_user_defined_system_prompt():
+    chat = Chat(
+        model="llama3.1",
+        base_url="http://localhost:11434/v1",
+        system="Complete all prompts in the style of a professor.",
+        tools=[add],
+    )
+    r = chat("What is 341+18?")
+    assert r == 359
+
 def test_llama_concat_tool():
     chat = Chat(
         model="llama3.1",
